@@ -20,7 +20,7 @@ html{-webkit-text-size-adjust:100%}
   --toast-bg:#2A2A2E; --toast-fg:#F5F4EF;
 }
 @media (prefers-color-scheme: dark){
-  :root{
+  :root:not([data-mode="light"]){
     --bg:#1B1B1E; --surface:#26262A; --surface2:#303036; --track:#37373D;
     --text:#F0EFEA; --sec:#A5A49C; --border:rgba(255,255,255,.1); --border2:rgba(255,255,255,.2);
     --acc:#AFA9EC; --acc-soft:#3C3489;
@@ -28,14 +28,24 @@ html{-webkit-text-size-adjust:100%}
     --toast-bg:#EFEDE6; --toast-fg:#1E1E1B;
   }
 }
+:root[data-mode="dark"]{
+  --bg:#1B1B1E; --surface:#26262A; --surface2:#303036; --track:#37373D;
+  --text:#F0EFEA; --sec:#A5A49C; --border:rgba(255,255,255,.1); --border2:rgba(255,255,255,.2);
+  --acc:#AFA9EC; --acc-soft:#3C3489;
+  --ok-border:#0F6E56; --ok-text:#9FE1CB;
+  --toast-bg:#EFEDE6; --toast-fg:#1E1E1B;
+}
 .g-big{--c-bg:#EEEDFE;--c-fg:#3C3489;--c-bar:#7F77DD}
 .g-small{--c-bg:#E1F5EE;--c-fg:#085041;--c-bar:#1D9E75}
 .g-extra{--c-bg:#FAECE7;--c-fg:#712B13;--c-bar:#D85A30}
 @media (prefers-color-scheme: dark){
-  .g-big{--c-bg:#3C3489;--c-fg:#CECBF6}
-  .g-small{--c-bg:#085041;--c-fg:#9FE1CB}
-  .g-extra{--c-bg:#712B13;--c-fg:#F5C4B3}
+  :root:not([data-mode="light"]) .g-big{--c-bg:#3C3489;--c-fg:#CECBF6}
+  :root:not([data-mode="light"]) .g-small{--c-bg:#085041;--c-fg:#9FE1CB}
+  :root:not([data-mode="light"]) .g-extra{--c-bg:#712B13;--c-fg:#F5C4B3}
 }
+[data-mode="dark"] .g-big{--c-bg:#3C3489;--c-fg:#CECBF6}
+[data-mode="dark"] .g-small{--c-bg:#085041;--c-fg:#9FE1CB}
+[data-mode="dark"] .g-extra{--c-bg:#712B13;--c-fg:#F5C4B3}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans Arabic",sans-serif;
   background:var(--bg); color:var(--text); line-height:1.5;
@@ -46,16 +56,20 @@ header.app{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1
 header.app .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:14px;padding-bottom:12px}
 h1{font-size:19px;font-weight:600}
 .date{font-size:12.5px;color:var(--sec);margin-top:1px}
-#langBtn{border:1px solid var(--border2);background:var(--surface);color:var(--text);border-radius:99px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
+#langBtn,#themeBtn{border:1px solid var(--border2);background:var(--surface);color:var(--text);border-radius:99px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
+#themeBtn{width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center}
+#themeBtn svg{width:19px;height:19px}
+.hbtns{display:flex;align-items:center;gap:8px}
 .sec-head{font-size:12.5px;color:var(--sec);margin:18px 2px 8px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .09s ease,border-color .15s;user-select:none}
 .card:active{transform:scale(.965)}
 .card.done{border-color:var(--ok-border)}
 .row{display:flex;gap:10px;align-items:center}
-.av{width:44px;height:44px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--avbg);--avbg:#F4F4F0;--body:#B3B7BB;--hl:#3FA84F}
-.av svg{width:27px;height:27px}
-@media (prefers-color-scheme: dark){.av{--avbg:#33343A;--body:#797E84}}
+.av{width:52px;height:52px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--avbg);--avbg:#F4F4F0;--body:#B3B7BB;--hl:#3FA84F}
+.av svg{width:36px;height:36px}
+@media (prefers-color-scheme: dark){:root:not([data-mode="light"]) .av{--avbg:#33343A;--body:#797E84}}
+[data-mode="dark"] .av{--avbg:#33343A;--body:#797E84}
 .nm{font-size:14.5px;font-weight:600}
 .sub{font-size:11.5px;color:var(--sec)}
 .cnt{font-size:12.5px;color:var(--sec);margin-top:1px}
@@ -80,8 +94,8 @@ h1{font-size:19px;font-weight:600}
 .wdot.on{background:var(--acc);border-color:var(--acc)}
 .wrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border)}
 .wrow:first-of-type{border-top:none}
-.wrow .av{width:30px;height:30px}
-.wrow .av svg{width:19px;height:19px}
+.wrow .av{width:36px;height:36px}
+.wrow .av svg{width:25px;height:25px}
 .wrow .info{flex:1;min-width:0}
 .wrow .nm{font-size:13.5px}
 .wrow .bar{margin-top:5px}
@@ -110,7 +124,7 @@ nav svg{width:22px;height:22px}
 <body>
 <header class="app"><div class="wrap">
   <div><h1 id="hTitle">جيم شرار</h1><div class="date" id="hDate"></div></div>
-  <button id="langBtn" type="button">EN</button>
+  <div class="hbtns"><button id="themeBtn" type="button"></button><button id="langBtn" type="button">EN</button></div>
 </div></header>
 
 <main class="wrap" id="view"></main>
@@ -178,7 +192,7 @@ function avatar(m){
 
 const I18N = {
   ar: {
-    dir:'rtl', langBtn:'EN', title:'جيم شرار',
+    dir:'rtl', langBtn:'EN', title:'جيم شرار', themeLbl:'تبديل الوضع الفاتح والداكن',
     tabToday:'اليوم', tabWeek:'الأسبوع', tabHistory:'السجل',
     bigHead:'عضلة كبيرة · 15 سيت بالأسبوع لكل عضلة',
     smallHead:'عضلة صغيرة · 9 سيت بالأسبوع لكل عضلة',
@@ -200,7 +214,7 @@ const I18N = {
     }
   },
   en: {
-    dir:'ltr', langBtn:'عربي', title:'Sharar Gym',
+    dir:'ltr', langBtn:'عربي', title:'Sharar Gym', themeLbl:'Toggle light and dark mode',
     tabToday:'Today', tabWeek:'Week', tabHistory:'History',
     bigHead:'Big muscles · 15 sets/week each',
     smallHead:'Small muscles · 9 sets/week each',
@@ -231,13 +245,14 @@ function load(){
       const s = JSON.parse(raw);
       if (s && s.version === 1 && typeof s.days === 'object' && s.days) {
         if (s.lang !== 'ar' && s.lang !== 'en') s.lang = 'ar';
+        if (s.theme !== 'light' && s.theme !== 'dark') s.theme = 'auto';
         return s;
       }
     } catch(e) {
       try { localStorage.setItem(KEY + '.corrupt.' + Date.now(), raw); } catch(_) {}
     }
   }
-  return { version:1, lang:'ar', days:{}, lastExport:null };
+  return { version:1, lang:'ar', theme:'auto', days:{}, lastExport:null };
 }
 
 const state = load();
@@ -249,6 +264,21 @@ function save(){
 }
 
 function t(k){ return I18N[state.lang][k]; }
+
+const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>';
+const MOON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.3 14.6A8.8 8.8 0 0 1 9.4 3.7 8.8 8.8 0 1 0 20.3 14.6z"/></svg>';
+function effectiveTheme(){
+  if (state.theme === 'light' || state.theme === 'dark') return state.theme;
+  try { return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } catch(e) { return 'light'; }
+}
+function applyTheme(){
+  const root = document.documentElement;
+  if (state.theme === 'light' || state.theme === 'dark') root.setAttribute('data-mode', state.theme);
+  else root.removeAttribute('data-mode');
+  const btn = document.getElementById('themeBtn');
+  btn.innerHTML = effectiveTheme() === 'dark' ? SUN : MOON;
+  btn.setAttribute('aria-label', t('themeLbl'));
+}
 function loc(){ return state.lang === 'ar' ? 'ar-u-ca-gregory-nu-latn' : 'en'; }
 function fmt(d, opts){ return new Intl.DateTimeFormat(loc(), opts).format(d); }
 
@@ -422,6 +452,7 @@ function renderHistory(){
 function render(){
   document.documentElement.lang = state.lang;
   document.documentElement.dir = t('dir');
+  applyTheme();
   document.getElementById('hTitle').textContent = t('title');
   document.getElementById('hDate').textContent = fmt(new Date(), {weekday:'long', day:'numeric', month:'long'});
   document.getElementById('langBtn').textContent = t('langBtn');
@@ -516,6 +547,16 @@ document.getElementById('langBtn').addEventListener('click', () => {
   save();
   render();
 });
+document.getElementById('themeBtn').addEventListener('click', () => {
+  state.theme = effectiveTheme() === 'dark' ? 'light' : 'dark';
+  save();
+  render();
+});
+try {
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (state.theme === 'auto') render();
+  });
+} catch(e) {}
 document.querySelectorAll('nav button').forEach(b =>
   b.addEventListener('click', () => { ui.tab = b.dataset.tab; render(); }));
 document.addEventListener('visibilitychange', () => {
