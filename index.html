@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F5F4EF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1B1B1E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Sharar Gym · جيم شرار</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+:root{
+  --bg:#F5F4EF; --surface:#FFFFFF; --surface2:#EFEDE6; --track:#ECEAE2;
+  --text:#1E1E1B; --sec:#6E6D66; --border:rgba(0,0,0,.09); --border2:rgba(0,0,0,.16);
+  --acc:#534AB7; --acc-soft:#EEEDFE;
+  --ok-border:#5DCAA5; --ok-text:#0F6E56;
+  --toast-bg:#2A2A2E; --toast-fg:#F5F4EF;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1B1B1E; --surface:#26262A; --surface2:#303036; --track:#37373D;
+    --text:#F0EFEA; --sec:#A5A49C; --border:rgba(255,255,255,.1); --border2:rgba(255,255,255,.2);
+    --acc:#AFA9EC; --acc-soft:#3C3489;
+    --ok-border:#0F6E56; --ok-text:#9FE1CB;
+    --toast-bg:#EFEDE6; --toast-fg:#1E1E1B;
+  }
+}
+.g-big{--c-bg:#EEEDFE;--c-fg:#3C3489;--c-bar:#7F77DD}
+.g-small{--c-bg:#E1F5EE;--c-fg:#085041;--c-bar:#1D9E75}
+.g-extra{--c-bg:#FAECE7;--c-fg:#712B13;--c-bar:#D85A30}
+@media (prefers-color-scheme: dark){
+  .g-big{--c-bg:#3C3489;--c-fg:#CECBF6}
+  .g-small{--c-bg:#085041;--c-fg:#9FE1CB}
+  .g-extra{--c-bg:#712B13;--c-fg:#F5C4B3}
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans Arabic",sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.5;
+  padding-bottom:calc(86px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:520px;margin:0 auto;padding:0 14px}
+header.app{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--border)}
+header.app .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:14px;padding-bottom:12px}
+h1{font-size:19px;font-weight:600}
+.date{font-size:12.5px;color:var(--sec);margin-top:1px}
+#langBtn{border:1px solid var(--border2);background:var(--surface);color:var(--text);border-radius:99px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
+.sec-head{font-size:12.5px;color:var(--sec);margin:18px 2px 8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .09s ease,border-color .15s;user-select:none}
+.card:active{transform:scale(.965)}
+.card.done{border-color:var(--ok-border)}
+.row{display:flex;gap:10px;align-items:center}
+.av{width:44px;height:44px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--c-bg);color:var(--c-fg)}
+.av svg{width:27px;height:27px}
+.nm{font-size:14.5px;font-weight:600}
+.sub{font-size:11.5px;color:var(--sec)}
+.cnt{font-size:12.5px;color:var(--sec);margin-top:1px}
+.cnt.ok{color:var(--ok-text)}
+.cnt .td{color:var(--c-fg);font-weight:600}
+.bar{height:5px;border-radius:3px;background:var(--track);margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--c-bar);transition:width .25s ease}
+.dots{display:flex;gap:6px;margin-top:12px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--track);border:1px solid var(--border2)}
+.dot.on{background:var(--c-bar);border-color:var(--c-bar)}
+.minus{position:absolute;top:8px;inset-inline-end:8px;width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:18px}
+.panel h2{font-size:14.5px;font-weight:600;margin-bottom:8px}
+.sumline{display:flex;justify-content:space-between;font-size:13.5px;padding:7px 0;border-top:1px solid var(--border)}
+.sumline:first-of-type{border-top:none}
+.sumline .v{color:var(--sec)}
+.muted{color:var(--sec);font-size:13px}
+.total{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;border-top:1px solid var(--border2);padding-top:9px;margin-top:2px}
+.wkstat{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wdots{display:flex;gap:6px}
+.wdot{width:11px;height:11px;border-radius:50%;background:var(--track);border:1px solid var(--border2)}
+.wdot.on{background:var(--acc);border-color:var(--acc)}
+.wrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border)}
+.wrow:first-of-type{border-top:none}
+.wrow .av{width:30px;height:30px}
+.wrow .av svg{width:19px;height:19px}
+.wrow .info{flex:1;min-width:0}
+.wrow .nm{font-size:13.5px}
+.wrow .bar{margin-top:5px}
+.wrow .cnt{flex:none;margin:0}
+details.month{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:12px;overflow:hidden}
+details.month summary{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;font-size:14.5px;font-weight:600;cursor:pointer;list-style:none}
+details.month summary::-webkit-details-marker{display:none}
+details.month summary .n{color:var(--sec);font-size:12.5px;font-weight:400}
+.dayrow{padding:10px 14px;border-top:1px solid var(--border)}
+.dayrow .d{font-size:13.5px;font-weight:600}
+.dayrow .s{font-size:12.5px;color:var(--sec);margin-top:1px}
+.btns{display:flex;gap:10px;margin-top:10px}
+.btns button{flex:1;padding:11px;border-radius:12px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font:inherit;font-size:13.5px;cursor:pointer}
+.btns button:active{transform:scale(.98)}
+nav{position:fixed;bottom:0;inset-inline:0;z-index:10;background:var(--surface);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
+nav .wrap{display:flex;padding:0}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;border:none;background:none;color:var(--sec);font:inherit;font-size:11.5px;cursor:pointer}
+nav button.active{color:var(--acc)}
+nav svg{width:22px;height:22px}
+#toast{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));inset-inline:0;margin:auto;width:max-content;max-width:85%;background:var(--toast-bg);color:var(--toast-fg);padding:9px 16px;border-radius:99px;font-size:13px;opacity:0;transform:translateY(6px);transition:.2s;pointer-events:none;z-index:20}
+#toast.show{opacity:1;transform:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="app"><div class="wrap">
+  <div><h1 id="hTitle">جيم شرار</h1><div class="date" id="hDate"></div></div>
+  <button id="langBtn" type="button">EN</button>
+</div></header>
+
+<main class="wrap" id="view"></main>
+
+<nav><div class="wrap">
+  <button type="button" data-tab="today" id="tabToday">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+    <span></span>
+  </button>
+  <button type="button" data-tab="week" id="tabWeek">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20v-9M12 20V5M19 20v-6"/></svg>
+    <span></span>
+  </button>
+  <button type="button" data-tab="history" id="tabHistory">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    <span></span>
+  </button>
+</div></nav>
+
+<div id="toast" role="status"></div>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+
+<script>
+const KEY = 'shararGym.v1';
+
+const MUSCLES = [
+  {id:'chest',     grp:'big',   target:15},
+  {id:'back',      grp:'big',   target:15},
+  {id:'legs',      grp:'big',   target:15},
+  {id:'shoulders', grp:'big',   target:15},
+  {id:'bi',        grp:'small', target:9},
+  {id:'tri',       grp:'small', target:9},
+  {id:'forearms',  grp:'extra', target:1, session:true},
+  {id:'calves',    grp:'extra', target:2, session:true}
+];
+
+const ICONS = {
+  chest: '<path d="M3 5.5h8v5A4.5 4.5 0 0 1 6.6 15 3.6 3.6 0 0 1 3 11.4V5.5z"/><path d="M13 5.5h8v5.9A3.6 3.6 0 0 1 17.4 15 4.5 4.5 0 0 1 13 10.5V5.5z"/>',
+  back: '<path d="M4 3h16l-2.2 8.5c-.3 1.2-.9 2.3-1.8 3.1L15 21H9l-1-6.4c-.9-.8-1.5-1.9-1.8-3.1L4 3z"/>',
+  legs: '<path d="M6 3h5v6l-.6 5 .6 7H8l-.7-7C6.6 11 6 8 6 5V3z"/><path d="M13 3h5v2c0 3-.6 6-1.3 9L16 21h-3l.6-7-.6-5V3z"/>',
+  shoulders: '<circle cx="12" cy="5" r="3"/><path d="M2 19.5c0-6 4.5-9.5 10-9.5s10 3.5 10 9.5v1H2v-1z"/>',
+  bi: '<path d="M3.5 20.5c-1.4-5.4 1.6-10 6.9-10.8l1.9.3 5.2-6.5 4 3.2-5 6.2c1.7 1.2 2.6 3 2.6 5.1 0 .9-.1 1.7-.4 2.5H3.5z"/>',
+  tri: '<path d="M3 14.5c0-4 2.6-6.6 6.5-6.9L20.7 4l1.3 4-10.6 3.4c-.4 3.3-2.6 5.1-5.6 5.1-1.1 0-2-.2-2.8-.5z"/>',
+  forearms: '<rect x="8" y="2.5" width="8" height="6.5" rx="2.5"/><path d="M9 9.5h6l.8 12H8.2z"/>',
+  calves: '<path d="M9 2.5h5c1.8 2.8 2.4 6 1.2 9-.7 1.8-1.6 3-2.2 4.5l-.3 2H9.5l.6-6.2C8.9 8.8 8.6 5.6 9 2.5z"/><path d="M8.5 19.5h7l2.2 2.5H7z"/>'
+};
+function avatar(m){
+  return '<span class="av" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none">' +
+    ICONS[m.id] + '</svg></span>';
+}
+
+const I18N = {
+  ar: {
+    dir:'rtl', langBtn:'EN', title:'جيم شرار',
+    tabToday:'اليوم', tabWeek:'الأسبوع', tabHistory:'السجل',
+    bigHead:'عضلة كبيرة · 15 سيت بالأسبوع لكل عضلة',
+    smallHead:'عضلة صغيرة · 9 سيت بالأسبوع لكل عضلة',
+    extraHead:'تمارين إضافية',
+    sets:'سيت', todayWord:'اليوم',
+    alreadyToday:'مسجّلة اليوم — زر − يلغيها',
+    todaySummary:'ملخص اليوم', totalSets:'مجموع السيتات', nothingToday:'ما تسجّل شي اليوم',
+    weekTitle:'هذا الأسبوع', trainedPrefix:'تمرّنت', trainedOf:'من 5 أيام',
+    emptyHistory:'السجل فاضي — أول ما تسجّل تمرين يظهر هنا',
+    backup:'النسخ الاحتياطي', exportBtn:'تصدير نسخة', importBtn:'استيراد نسخة',
+    lastExportNever:'ما صدّرت نسخة لحد الآن', lastExportPrefix:'آخر تصدير:',
+    importedOk:'تم الاستيراد ودمج البيانات', importBad:'الملف غير صالح',
+    saveFail:'ما قدرت أحفظ! تأكد من مساحة المتصفح',
+    dayWord:'يوم',
+    m:{
+      chest:['صدر','','ص'], back:['ظهر','مع أسفل الظهر','ظ'], legs:['رجل','','ر'], shoulders:['أكتاف','مع المثلثات','ك'],
+      bi:['باي','','ب'], tri:['تراي','','ت'],
+      forearms:['سواعد','مرة بالأسبوع','س'], calves:['بطات','مرتين بالأسبوع','بط']
+    }
+  },
+  en: {
+    dir:'ltr', langBtn:'عربي', title:'Sharar Gym',
+    tabToday:'Today', tabWeek:'Week', tabHistory:'History',
+    bigHead:'Big muscles · 15 sets/week each',
+    smallHead:'Small muscles · 9 sets/week each',
+    extraHead:'Extra work',
+    sets:'sets', todayWord:'today',
+    alreadyToday:'Already logged today — use − to undo',
+    todaySummary:'Today summary', totalSets:'Total sets', nothingToday:'Nothing logged today',
+    weekTitle:'This week', trainedPrefix:'Trained', trainedOf:'of 5 days',
+    emptyHistory:'History is empty — your first logged workout will show here',
+    backup:'Backup', exportBtn:'Export backup', importBtn:'Import backup',
+    lastExportNever:'No backup exported yet', lastExportPrefix:'Last export:',
+    importedOk:'Backup imported and merged', importBad:'Invalid backup file',
+    saveFail:'Could not save! Check browser storage',
+    dayWord:'days',
+    m:{
+      chest:['Chest','','CH'], back:['Back','incl. lower back','BK'], legs:['Legs','','LG'], shoulders:['Shoulders','incl. traps','SH'],
+      bi:['Biceps','','BI'], tri:['Triceps','','TR'],
+      forearms:['Forearms','once a week','FA'], calves:['Calves','twice a week','CA']
+    }
+  }
+};
+
+function load(){
+  let raw = null;
+  try { raw = localStorage.getItem(KEY); } catch(e) {}
+  if (raw) {
+    try {
+      const s = JSON.parse(raw);
+      if (s && s.version === 1 && typeof s.days === 'object' && s.days) {
+        if (s.lang !== 'ar' && s.lang !== 'en') s.lang = 'ar';
+        return s;
+      }
+    } catch(e) {
+      try { localStorage.setItem(KEY + '.corrupt.' + Date.now(), raw); } catch(_) {}
+    }
+  }
+  return { version:1, lang:'ar', days:{}, lastExport:null };
+}
+
+const state = load();
+const ui = { tab:'today', open:null };
+
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e) { toast(t('saveFail')); }
+}
+
+function t(k){ return I18N[state.lang][k]; }
+function loc(){ return state.lang === 'ar' ? 'ar-u-ca-gregory-nu-latn' : 'en'; }
+function fmt(d, opts){ return new Intl.DateTimeFormat(loc(), opts).format(d); }
+
+function dateKey(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function parseKey(k){
+  const [y,m,dd] = k.split('-').map(Number);
+  return new Date(y, m-1, dd);
+}
+function todayKey(){ return dateKey(new Date()); }
+
+function weekKeys(){
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  start.setDate(start.getDate() - start.getDay());
+  return Array.from({length:7}, (_,i) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    return dateKey(d);
+  });
+}
+
+function weekTotal(id){
+  return weekKeys().reduce((sum,k) => sum + ((state.days[k] || {})[id] || 0), 0);
+}
+function dayTotalSets(day){
+  return MUSCLES.reduce((s,m) => s + (m.session ? 0 : (day[m.id] || 0)), 0);
+}
+function dayHasWork(day){
+  return MUSCLES.some(m => (day[m.id] || 0) > 0);
+}
+function daysTrainedThisWeek(){
+  return weekKeys().filter(k => state.days[k] && dayHasWork(state.days[k])).length;
+}
+function daySummaryText(day){
+  const parts = [];
+  for (const m of MUSCLES) {
+    const v = day[m.id] || 0;
+    if (v > 0) parts.push(t('m')[m.id][0] + (m.session ? ' ✓' : ' ' + v));
+  }
+  return parts.join(' · ');
+}
+
+function logSet(id){
+  const m = MUSCLES.find(x => x.id === id);
+  const tk = todayKey();
+  const day = state.days[tk] = state.days[tk] || {};
+  if (m.session && (day[id] || 0) >= 1) { toast(t('alreadyToday')); return; }
+  day[id] = (day[id] || 0) + 1;
+  save();
+  try { navigator.vibrate && navigator.vibrate(12); } catch(e) {}
+  render();
+}
+function unlogSet(id){
+  const tk = todayKey();
+  const day = state.days[tk];
+  if (!day || !(day[id] > 0)) return;
+  day[id] -= 1;
+  if (day[id] === 0) delete day[id];
+  save();
+  render();
+}
+
+function muscleCard(m){
+  const L = t('m')[m.id];
+  const wk = weekTotal(m.id);
+  const td = (state.days[todayKey()] || {})[m.id] || 0;
+  const done = wk >= m.target;
+  let progress;
+  if (m.session) {
+    const n = Math.max(m.target, wk);
+    progress = '<div class="dots">' + Array.from({length:n}, (_,i) =>
+      '<span class="dot' + (i < wk ? ' on' : '') + '"></span>').join('') + '</div>';
+  } else {
+    const pct = Math.min(100, Math.round(wk / m.target * 100));
+    progress = '<div class="bar"><i style="width:' + pct + '%"></i></div>';
+  }
+  const cnt = wk + '/' + m.target + (m.session ? '' : ' ' + t('sets')) +
+    (td > 0 ? ' · <span class="td">+' + td + ' ' + t('todayWord') + '</span>' : '');
+  return '<div class="card g-' + m.grp + (done ? ' done' : '') + '" role="button" tabindex="0" data-log="' + m.id + '" aria-label="' + L[0] + '">' +
+    (td > 0 ? '<button type="button" class="minus" data-unlog="' + m.id + '" aria-label="−1 ' + L[0] + '">−</button>' : '') +
+    '<div class="row">' + avatar(m) + '<div style="min-width:0">' +
+    '<div class="nm">' + L[0] + '</div>' +
+    (L[1] ? '<div class="sub">' + L[1] + '</div>' : '') +
+    '<div class="cnt' + (done ? ' ok' : '') + '">' + cnt + '</div>' +
+    '</div></div>' + progress + '</div>';
+}
+
+function renderToday(){
+  const day = state.days[todayKey()] || {};
+  let h = '';
+  h += '<div class="sec-head">' + t('bigHead') + '</div><div class="grid">' +
+       MUSCLES.filter(m => m.grp === 'big').map(muscleCard).join('') + '</div>';
+  h += '<div class="sec-head">' + t('smallHead') + '</div><div class="grid">' +
+       MUSCLES.filter(m => m.grp === 'small').map(muscleCard).join('') + '</div>';
+  h += '<div class="sec-head">' + t('extraHead') + '</div><div class="grid">' +
+       MUSCLES.filter(m => m.grp === 'extra').map(muscleCard).join('') + '</div>';
+  h += '<div class="panel"><h2>' + t('todaySummary') + '</h2>';
+  if (dayHasWork(day)) {
+    for (const m of MUSCLES) {
+      const v = day[m.id] || 0;
+      if (v > 0) {
+        h += '<div class="sumline"><span>' + t('m')[m.id][0] + '</span><span class="v">' +
+             (m.session ? '✓' : v + ' ' + t('sets')) + '</span></div>';
+      }
+    }
+    h += '<div class="total"><span>' + t('totalSets') + '</span><span>' + dayTotalSets(day) + '</span></div>';
+  } else {
+    h += '<div class="muted">' + t('nothingToday') + '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function renderWeek(){
+  const keys = weekKeys();
+  const range = fmt(parseKey(keys[0]), {day:'numeric', month:'long'}) + ' – ' +
+                fmt(parseKey(keys[6]), {day:'numeric', month:'long'});
+  const trained = daysTrainedThisWeek();
+  let h = '<div class="panel" style="margin-top:16px"><h2>' + t('weekTitle') + '</h2>' +
+    '<div class="muted">' + range + '</div>' +
+    '<div class="wkstat" style="margin-top:10px"><span style="font-size:13.5px">' +
+    t('trainedPrefix') + ' ' + trained + ' ' + t('trainedOf') + '</span>' +
+    '<span class="wdots">' + Array.from({length:5}, (_,i) =>
+      '<span class="wdot' + (i < trained ? ' on' : '') + '"></span>').join('') + '</span></div></div>';
+  h += '<div class="panel">';
+  for (const m of MUSCLES) {
+    const L = t('m')[m.id];
+    const wk = weekTotal(m.id);
+    const done = wk >= m.target;
+    const pct = Math.min(100, Math.round(wk / m.target * 100));
+    h += '<div class="wrow g-' + m.grp + '">' + avatar(m) +
+      '<div class="info"><div class="nm">' + L[0] + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
+      '<span class="cnt' + (done ? ' ok' : '') + '">' + wk + '/' + m.target + (done ? ' ✓' : '') + '</span></div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function renderHistory(){
+  const keys = Object.keys(state.days).filter(k => dayHasWork(state.days[k])).sort().reverse();
+  let h = '';
+  if (!keys.length) {
+    h += '<div class="panel"><div class="muted">' + t('emptyHistory') + '</div></div>';
+  } else {
+    if (ui.open === null) ui.open = new Set([keys[0].slice(0,7)]);
+    const months = {};
+    for (const k of keys) (months[k.slice(0,7)] = months[k.slice(0,7)] || []).push(k);
+    for (const mk of Object.keys(months).sort().reverse()) {
+      const label = fmt(parseKey(mk + '-01'), {month:'long', year:'numeric'});
+      const dayKeys = months[mk];
+      h += '<details class="month" data-month="' + mk + '"' + (ui.open.has(mk) ? ' open' : '') + '>' +
+        '<summary><span>' + label + '</span><span class="n">' + dayKeys.length + ' ' + t('dayWord') + '</span></summary>';
+      for (const dk of dayKeys) {
+        h += '<div class="dayrow"><div class="d">' + fmt(parseKey(dk), {weekday:'long', day:'numeric'}) + '</div>' +
+             '<div class="s">' + daySummaryText(state.days[dk]) + '</div></div>';
+      }
+      h += '</details>';
+    }
+  }
+  const le = state.lastExport
+    ? t('lastExportPrefix') + ' ' + fmt(parseKey(state.lastExport), {day:'numeric', month:'long', year:'numeric'})
+    : t('lastExportNever');
+  h += '<div class="panel"><h2>' + t('backup') + '</h2><div class="muted">' + le + '</div>' +
+    '<div class="btns"><button type="button" data-act="export">' + t('exportBtn') + '</button>' +
+    '<button type="button" data-act="import">' + t('importBtn') + '</button></div></div>';
+  return h;
+}
+
+function render(){
+  document.documentElement.lang = state.lang;
+  document.documentElement.dir = t('dir');
+  document.getElementById('hTitle').textContent = t('title');
+  document.getElementById('hDate').textContent = fmt(new Date(), {weekday:'long', day:'numeric', month:'long'});
+  document.getElementById('langBtn').textContent = t('langBtn');
+  document.querySelector('#tabToday span').textContent = t('tabToday');
+  document.querySelector('#tabWeek span').textContent = t('tabWeek');
+  document.querySelector('#tabHistory span').textContent = t('tabHistory');
+  document.querySelectorAll('nav button').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === ui.tab));
+  const view = document.getElementById('view');
+  view.innerHTML = ui.tab === 'today' ? renderToday() : ui.tab === 'week' ? renderWeek() : renderHistory();
+}
+
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+function doExport(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sharar-gym-backup-' + todayKey() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  state.lastExport = todayKey();
+  save();
+  render();
+}
+
+function mergeImport(inc){
+  if (!inc || typeof inc.days !== 'object' || !inc.days) throw new Error('bad');
+  for (const dk in inc.days) {
+    const src = inc.days[dk];
+    if (!src || typeof src !== 'object' || !/^\d{4}-\d{2}-\d{2}$/.test(dk)) continue;
+    const dst = state.days[dk] = state.days[dk] || {};
+    for (const m of MUSCLES) {
+      const v = Math.max(0, Math.floor(Number(src[m.id]) || 0));
+      if (v > (dst[m.id] || 0)) dst[m.id] = v;
+    }
+  }
+}
+function doImport(file){
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      mergeImport(JSON.parse(r.result));
+      save();
+      render();
+      toast(t('importedOk'));
+    } catch(e) {
+      toast(t('importBad'));
+    }
+  };
+  r.readAsText(file);
+}
+
+document.getElementById('view').addEventListener('click', e => {
+  const un = e.target.closest('[data-unlog]');
+  if (un) { unlogSet(un.dataset.unlog); return; }
+  const lg = e.target.closest('[data-log]');
+  if (lg) { logSet(lg.dataset.log); return; }
+  const act = e.target.closest('[data-act]');
+  if (act) {
+    if (act.dataset.act === 'export') doExport();
+    else document.getElementById('importFile').click();
+  }
+});
+document.getElementById('view').addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.log) {
+    e.preventDefault();
+    logSet(e.target.dataset.log);
+  }
+});
+document.getElementById('view').addEventListener('toggle', e => {
+  const d = e.target;
+  if (d.classList && d.classList.contains('month') && ui.open) {
+    if (d.open) ui.open.add(d.dataset.month); else ui.open.delete(d.dataset.month);
+  }
+}, true);
+document.getElementById('importFile').addEventListener('change', e => {
+  if (e.target.files[0]) doImport(e.target.files[0]);
+  e.target.value = '';
+});
+document.getElementById('langBtn').addEventListener('click', () => {
+  state.lang = state.lang === 'ar' ? 'en' : 'ar';
+  save();
+  render();
+});
+document.querySelectorAll('nav button').forEach(b =>
+  b.addEventListener('click', () => { ui.tab = b.dataset.tab; render(); }));
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) render();
+});
+
+render();
+</script>
+</body>
+</html>
