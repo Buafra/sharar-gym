@@ -106,11 +106,13 @@ h1{font-size:19px;font-weight:600}
 .exnm{flex:1;text-align:start}
 .exrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);font-size:13.5px;cursor:pointer;user-select:none}
 .exrow:active{background:var(--surface2)}
+.exsub{font-size:11.5px;color:var(--sec);margin-top:1px}
 .chip{font-size:11px;padding:2px 10px;border-radius:99px;background:var(--surface2);border:1px solid var(--border);color:var(--sec);flex:none}
 .exadd{padding:11px 14px;border-top:1px solid var(--border);font-size:12.5px;color:var(--acc);cursor:pointer}
-.exform{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--border)}
+.exform{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--border)}
 .exform input,.exform select{padding:8px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font:inherit;font-size:13px}
-.exform input{flex:1;min-width:0}
+.exform input{flex:1 1 100%;min-width:0}
+.exform select{flex:1}
 .exform button{padding:8px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font:inherit;font-size:13px;cursor:pointer}
 .wrow .info{flex:1;min-width:0}
 .wrow .nm{font-size:13.5px}
@@ -264,7 +266,7 @@ const I18N = {
     dir:'rtl', langBtn:'EN', title:'جيم شرار', themeLbl:'تبديل الوضع الفاتح والداكن',
     tabToday:'اليوم', tabWeek:'الأسبوع', tabHistory:'السجل', tabExr:'التمارين',
     exrTitle:'التمارين والأجهزة', exrSub:'اضغط على أي تمرين لتسجيل سيت', exrWord:'تمارين',
-    addExr:'+ إضافة تمرين', saveBtn:'حفظ', exNamePh:'اسم التمرين',
+    addExr:'+ إضافة تمرين', saveBtn:'حفظ', exNamePh:'اسم التمرين', exMachPh:'الجهاز أو الأداة (اختياري)',
     eq:{bar:'بار', db:'دمبل', cable:'كيبل', machine:'جهاز', body:'جسم'},
     bigHead:'عضلة كبيرة · 15 سيت بالأسبوع لكل عضلة',
     smallHead:'عضلة صغيرة · 9 سيت بالأسبوع لكل عضلة',
@@ -289,7 +291,7 @@ const I18N = {
     dir:'ltr', langBtn:'عربي', title:'Sharar Gym', themeLbl:'Toggle light and dark mode',
     tabToday:'Today', tabWeek:'Week', tabHistory:'History', tabExr:'Exercises',
     exrTitle:'Exercises and machines', exrSub:'Tap an exercise to log a set', exrWord:'exercises',
-    addExr:'+ Add exercise', saveBtn:'Save', exNamePh:'Exercise name',
+    addExr:'+ Add exercise', saveBtn:'Save', exNamePh:'Exercise name', exMachPh:'Machine or tool (optional)',
     eq:{bar:'Bar', db:'Dumbbell', cable:'Cable', machine:'Machine', body:'Body'},
     bigHead:'Big muscles · 15 sets/week each',
     smallHead:'Small muscles · 9 sets/week each',
@@ -313,14 +315,50 @@ const I18N = {
 };
 
 const EXR = {
-  chest: [['بنش برس','Bench press','bar'],['دمبل برس عالي','Incline dumbbell press','db'],['فراشة (بيك دك)','Pec deck fly','machine'],['كروس أوفر','Cable crossover','cable'],['بوش أب','Push-ups','body']],
-  back: [['سحب أمامي (لات بول داون)','Lat pulldown','machine'],['سحب أرضي','Seated cable row','cable'],['عقلة','Pull-ups','body'],['تي بار رو','T-bar row','bar'],['هايبر إكستنشن — أسفل الظهر','Hyperextension — lower back','machine']],
-  legs: [['سكوات','Squat','bar'],['ليج برس','Leg press','machine'],['ليج إكستنشن','Leg extension','machine'],['ليج كيرل','Leg curl','machine'],['لانجز','Lunges','db']],
-  shoulders: [['شولدر برس','Shoulder press','db'],['رفرفة جانبية','Lateral raise','db'],['رفرفة أمامية','Front raise','db'],['رفرفة خلفية','Reverse fly','machine'],['شرقز — للمثلثات','Shrugs — traps','db']],
-  bi: [['زد بار كيرل','EZ-bar curl','bar'],['دمبل كيرل تبادل','Alternating dumbbell curl','db'],['كونسنتريشن كيرل','Concentration curl','db'],['كيبل كيرل','Cable curl','cable']],
-  tri: [['بوش داون','Cable pushdown','cable'],['فرنش برس','Overhead extension','db'],['ديبس','Dips','body'],['كيك باك','Kickback','db']],
-  forearms: [['ريست كيرل','Wrist curl','bar'],['ريفيرس كيرل','Reverse curl','bar'],['فارمر ووك','Farmer walk','db'],['جريب — تقوية القبضة','Grip trainer','machine']],
-  calves: [['سمانة واقف','Standing calf raise','machine'],['سمانة جالس','Seated calf raise','machine'],['سمانة على الليج برس','Leg-press calf raise','machine'],['سمانة على درجة','Step calf raise','body']]
+  chest: [
+    ['بنش برس','Bench press','bar','بنش مسطح + بار','Flat bench + barbell'],
+    ['دمبل برس عالي','Incline dumbbell press','db','بنش مائل + دمبلات','Incline bench + dumbbells'],
+    ['فراشة (بيك دك)','Pec deck fly','machine','جهاز الفراشة','Pec deck machine'],
+    ['كروس أوفر','Cable crossover','cable','جهاز الكيبل المتقاطع','Cable crossover station'],
+    ['بوش أب','Push-ups','body','بدون معدات','No equipment']],
+  back: [
+    ['سحب أمامي (لات بول داون)','Lat pulldown','machine','جهاز السحب العلوي','Lat pulldown machine'],
+    ['سحب أرضي','Seated cable row','cable','جهاز السحب الأرضي','Seated row station'],
+    ['عقلة','Pull-ups','body','بار العقلة','Pull-up bar'],
+    ['تي بار رو','T-bar row','bar','جهاز التي بار','T-bar row machine'],
+    ['هايبر إكستنشن — أسفل الظهر','Hyperextension — lower back','machine','كرسي الظهر الروماني','Back extension bench']],
+  legs: [
+    ['سكوات','Squat','bar','قفص السكوات + بار','Squat rack + barbell'],
+    ['ليج برس','Leg press','machine','جهاز الليج برس','Leg press machine'],
+    ['ليج إكستنشن','Leg extension','machine','جهاز فرد الأرجل','Leg extension machine'],
+    ['ليج كيرل','Leg curl','machine','جهاز ثني الأرجل','Leg curl machine'],
+    ['لانجز','Lunges','db','دمبلات','Dumbbells']],
+  shoulders: [
+    ['شولدر برس','Shoulder press','db','كرسي بظهر عالي + دمبلات','Upright bench + dumbbells'],
+    ['رفرفة جانبية','Lateral raise','db','دمبلات خفيفة','Light dumbbells'],
+    ['رفرفة أمامية','Front raise','db','دمبلات خفيفة','Light dumbbells'],
+    ['رفرفة خلفية','Reverse fly','machine','جهاز الفراشة العكسي','Reverse pec deck'],
+    ['شرقز — للمثلثات','Shrugs — traps','db','دمبلات ثقيلة','Heavy dumbbells']],
+  bi: [
+    ['زد بار كيرل','EZ-bar curl','bar','بار زد + أوزان','EZ-bar + plates'],
+    ['دمبل كيرل تبادل','Alternating dumbbell curl','db','دمبلات','Dumbbells'],
+    ['كونسنتريشن كيرل','Concentration curl','db','دمبل + كرسي','Dumbbell + bench'],
+    ['كيبل كيرل','Cable curl','cable','جهاز الكيبل — بكرة سفلية','Cable station, low pulley']],
+  tri: [
+    ['بوش داون','Cable pushdown','cable','جهاز الكيبل — بكرة علوية + حبل','Cable station, high pulley + rope'],
+    ['فرنش برس','Overhead extension','db','دمبل واحد','Single dumbbell'],
+    ['ديبس','Dips','body','المتوازي','Dip bars'],
+    ['كيك باك','Kickback','db','دمبل + كرسي','Dumbbell + bench']],
+  forearms: [
+    ['ريست كيرل','Wrist curl','bar','بار صغير + كرسي','Short bar + bench'],
+    ['ريفيرس كيرل','Reverse curl','bar','بار زد','EZ-bar'],
+    ['فارمر ووك','Farmer walk','db','دمبلات ثقيلة','Heavy dumbbells'],
+    ['جريب — تقوية القبضة','Grip trainer','machine','أداة القبضة','Grip trainer']],
+  calves: [
+    ['سمانة واقف','Standing calf raise','machine','جهاز السمانة واقف أو السميث','Standing calf machine or Smith'],
+    ['سمانة جالس','Seated calf raise','machine','جهاز السمانة جالس','Seated calf machine'],
+    ['سمانة على الليج برس','Leg-press calf raise','machine','جهاز الليج برس','Leg press machine'],
+    ['سمانة على درجة','Step calf raise','body','درجة أو وزن حر','A step or a plate']]
 };
 
 function esc(s){
@@ -519,13 +557,16 @@ function renderExr(){
     h += '<details class="month exm" data-m="' + m.id + '"' + (ui.openExr.has(m.id) ? ' open' : '') + '>' +
       '<summary>' + avatar(m) + '<span class="exnm">' + L[0] + '</span><span class="n">' + (builtin.length + custom.length) + ' ' + t('exrWord') + '</span></summary>';
     for (const e of builtin) {
-      h += '<div class="exrow" data-logx="' + m.id + '"><span>' + (state.lang === 'ar' ? e[0] : e[1]) + '</span><span class="chip">' + t('eq')[e[2]] + '</span></div>';
+      h += '<div class="exrow" data-logx="' + m.id + '"><div style="min-width:0"><div>' + (state.lang === 'ar' ? e[0] : e[1]) + '</div>' +
+        '<div class="exsub">' + (state.lang === 'ar' ? e[3] : e[4]) + '</div></div><span class="chip">' + t('eq')[e[2]] + '</span></div>';
     }
     for (const e of custom) {
-      h += '<div class="exrow" data-logx="' + m.id + '"><span>' + esc(e.n) + '</span><span class="chip">' + t('eq')[e.q] + '</span></div>';
+      h += '<div class="exrow" data-logx="' + m.id + '"><div style="min-width:0"><div>' + esc(e.n) + '</div>' +
+        (e.mch ? '<div class="exsub">' + esc(e.mch) + '</div>' : '') + '</div><span class="chip">' + t('eq')[e.q] + '</span></div>';
     }
     if (ui.addingFor === m.id) {
       h += '<div class="exform"><input id="exName" placeholder="' + t('exNamePh') + '" maxlength="40">' +
+        '<input id="exMach" placeholder="' + t('exMachPh') + '" maxlength="60">' +
         '<select id="exEq">' + ['machine','bar','db','cable','body'].map(q =>
           '<option value="' + q + '">' + t('eq')[q] + '</option>').join('') + '</select>' +
         '<button type="button" data-saveex="' + m.id + '">' + t('saveBtn') + '</button></div>';
@@ -626,7 +667,9 @@ function mergeImport(inc){
       const dst = state.custom[mid] = state.custom[mid] || [];
       for (const e of inc.custom[mid]) {
         if (e && typeof e.n === 'string' && e.n.trim() && !dst.some(x => x.n === e.n)) {
-          dst.push({ n: e.n.slice(0, 40), q: (typeof e.q === 'string' && t('eq')[e.q]) ? e.q : 'machine' });
+          const entry = { n: e.n.slice(0, 40), q: (typeof e.q === 'string' && t('eq')[e.q]) ? e.q : 'machine' };
+          if (typeof e.mch === 'string' && e.mch.trim()) entry.mch = e.mch.slice(0, 60);
+          dst.push(entry);
         }
       }
     }
@@ -672,10 +715,13 @@ document.getElementById('view').addEventListener('click', e => {
   const sv = e.target.closest('[data-saveex]');
   if (sv) {
     const name = (document.getElementById('exName').value || '').trim();
+    const mch = (document.getElementById('exMach').value || '').trim();
     const q = document.getElementById('exEq').value;
     if (name) {
       if (!state.custom) state.custom = {};
-      (state.custom[sv.dataset.saveex] = state.custom[sv.dataset.saveex] || []).push({ n: name.slice(0, 40), q: q });
+      const entry = { n: name.slice(0, 40), q: q };
+      if (mch) entry.mch = mch.slice(0, 60);
+      (state.custom[sv.dataset.saveex] = state.custom[sv.dataset.saveex] || []).push(entry);
       ui.addingFor = null;
       save();
       render();
