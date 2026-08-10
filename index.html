@@ -66,10 +66,14 @@ h1{font-size:19px;font-weight:600}
 .card:active{transform:scale(.965)}
 .card.done{border-color:var(--ok-border)}
 .row{display:flex;gap:10px;align-items:center}
-.av{width:60px;height:60px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--avbg);--avbg:#F4F4F0;--body:#B3B7BB;--hl:#3FA84F}
-.av svg{width:42px;height:42px}
-@media (prefers-color-scheme: dark){:root:not([data-mode="light"]) .av{--avbg:#33343A;--body:#797E84}}
-[data-mode="dark"] .av{--avbg:#33343A;--body:#797E84}
+.av{width:60px;height:60px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--avbg);--avbg:#F4F4F0;--body:#B7BBBF;--shade:#A2A8AD;--hl:#3FA84F}
+.av svg{width:44px;height:44px}
+.av svg .b{fill:var(--body)}
+.av svg .s{fill:var(--shade)}
+.av svg .d{fill:#6B7076}
+.av svg .h{fill:var(--hl)}
+@media (prefers-color-scheme: dark){:root:not([data-mode="light"]) .av{--avbg:#33343A;--body:#7A8086;--shade:#666C72}}
+[data-mode="dark"] .av{--avbg:#33343A;--body:#7A8086;--shade:#666C72}
 .nm{font-size:14.5px;font-weight:600}
 .sub{font-size:11.5px;color:var(--sec)}
 .cnt{font-size:12.5px;color:var(--sec);margin-top:1px}
@@ -95,7 +99,19 @@ h1{font-size:19px;font-weight:600}
 .wrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border)}
 .wrow:first-of-type{border-top:none}
 .wrow .av{width:42px;height:42px}
-.wrow .av svg{width:30px;height:30px}
+.wrow .av svg{width:31px;height:31px}
+.exm summary{gap:10px}
+.exm .av{width:44px;height:44px}
+.exm .av svg{width:32px;height:32px}
+.exnm{flex:1;text-align:start}
+.exrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);font-size:13.5px;cursor:pointer;user-select:none}
+.exrow:active{background:var(--surface2)}
+.chip{font-size:11px;padding:2px 10px;border-radius:99px;background:var(--surface2);border:1px solid var(--border);color:var(--sec);flex:none}
+.exadd{padding:11px 14px;border-top:1px solid var(--border);font-size:12.5px;color:var(--acc);cursor:pointer}
+.exform{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--border)}
+.exform input,.exform select{padding:8px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font:inherit;font-size:13px}
+.exform input{flex:1;min-width:0}
+.exform button{padding:8px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font:inherit;font-size:13px;cursor:pointer}
 .wrow .info{flex:1;min-width:0}
 .wrow .nm{font-size:13.5px}
 .wrow .bar{margin-top:5px}
@@ -138,6 +154,10 @@ nav svg{width:22px;height:22px}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20v-9M12 20V5M19 20v-6"/></svg>
     <span></span>
   </button>
+  <button type="button" data-tab="exr" id="tabExr">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 8.5v7M17 8.5v7M4.5 10v4M19.5 10v4M7 12h10M2.5 12h2M19.5 12h2"/></svg>
+    <span></span>
+  </button>
   <button type="button" data-tab="history" id="tabHistory">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
     <span></span>
@@ -161,39 +181,91 @@ const MUSCLES = [
   {id:'calves',    grp:'extra', target:2, session:true}
 ];
 
-const BP = {
-  head: '<circle cx="12" cy="2.7" r="1.65"/><path d="M10.9 4.2h2.2v1.5h-2.2z"/>',
-  torso: '<path d="M7.7 6c1.3-.55 2.7-.8 4.3-.8s3 .25 4.3.8l-.55 6c-.18 1.9-.55 3.2-1.05 4.3l-.3 3.3c-.75.3-1.55.45-2.4.45s-1.65-.15-2.4-.45l-.3-3.3c-.5-1.1-.87-2.4-1.05-4.3z"/>',
-  delts: '<circle cx="6.6" cy="7.15" r="1.8"/><circle cx="17.4" cy="7.15" r="1.8"/>',
-  arms: '<path d="M6.4 7.1 5.3 11.8 4.3 15.7" fill="none" stroke="var(--body)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.6 7.1 18.7 11.8 19.7 15.7" fill="none" stroke="var(--body)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>',
-  hips: '<path d="M8.3 3.2h7.4l-.4 3.4c-1.1.4-2.2.6-3.3.6s-2.2-.2-3.3-.6z"/>',
-  legs: '<path d="M10 6.8 9.6 12.6 9.9 18.6" fill="none" stroke="var(--body)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 6.8 14.4 12.6 14.1 18.6" fill="none" stroke="var(--body)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.9 18.6l-1.4 1.6M14.1 18.6l1.4 1.6" fill="none" stroke="var(--body)" stroke-width="2" stroke-linecap="round"/>',
-  spine: '<path d="M12 6.8v5.8" fill="none" stroke="var(--avbg)" stroke-width=".7"/>'
-};
-const TORSO = '<g fill="var(--body)">' + BP.head + BP.torso + BP.delts + '</g>' + BP.arms;
-const TORSO_ND = '<g fill="var(--body)">' + BP.head + BP.torso + '</g>' + BP.arms;
-const LEGS = '<g fill="var(--body)">' + BP.hips + '</g>' + BP.legs;
-const HL = 'fill="var(--hl)"';
-const HLS = 'stroke="var(--hl)" stroke-linecap="round" fill="none"';
+function FT(tg){
+  const pec = tg==='pecs'?'h':'b', delt = tg==='delts'?'h':'s', bic = tg==='bi'?'h':'b', fa = tg==='fa'?'h':'b';
+  return '<ellipse class="b" cx="32" cy="6.3" rx="4.9" ry="5.6"/>' +
+  '<path class="b" d="M28.9 11.2h6.2l.6 4.6h-7.4z"/>' +
+  '<path class="s" d="M28.2 14.6c-3 .4-5.6 1.4-7.7 3l7.9-.9z"/>' +
+  '<path class="s" d="M35.8 14.6c3 .4 5.6 1.4 7.7 3l-7.9-.9z"/>' +
+  '<ellipse class="' + delt + '" cx="19.4" cy="21.6" rx="5" ry="4.5"/>' +
+  '<ellipse class="' + delt + '" cx="44.6" cy="21.6" rx="5" ry="4.5"/>' +
+  '<path class="' + pec + '" d="M31.5 19.6c-4.4-.5-8.2.3-9.9 2.3-1.3 2.5-.5 5.9 1.9 7.8 2.1 1.6 5.3 1.9 7.2.6.6-.5.8-1.1.8-2z"/>' +
+  '<path class="' + pec + '" d="M32.5 19.6c4.4-.5 8.2.3 9.9 2.3 1.3 2.5.5 5.9-1.9 7.8-2.1 1.6-5.3 1.9-7.2.6-.6-.5-.8-1.1-.8-2z"/>' +
+  '<rect class="b" x="27.4" y="32.6" width="4.2" height="4.6" rx="1.8"/><rect class="b" x="32.4" y="32.6" width="4.2" height="4.6" rx="1.8"/>' +
+  '<rect class="b" x="27.6" y="38" width="4" height="4.6" rx="1.8"/><rect class="b" x="32.4" y="38" width="4" height="4.6" rx="1.8"/>' +
+  '<rect class="b" x="27.8" y="43.4" width="3.8" height="5" rx="1.8"/><rect class="b" x="32.4" y="43.4" width="3.8" height="5" rx="1.8"/>' +
+  '<path class="s" d="M25.6 33c-1.7.4-3 1.1-3.9 2.1l1.5 9.6c.9 1.1 2 1.9 3.2 2.3-1-4.6-1.2-9.3-.8-14z"/>' +
+  '<path class="s" d="M38.4 33c1.7.4 3 1.1 3.9 2.1l-1.5 9.6c-.9 1.1-2 1.9-3.2 2.3 1-4.6 1.2-9.3.8-14z"/>' +
+  '<ellipse class="' + bic + '" cx="15.6" cy="29" rx="4" ry="6.2" transform="rotate(12 15.6 29)"/>' +
+  '<ellipse class="' + bic + '" cx="48.4" cy="29" rx="4" ry="6.2" transform="rotate(-12 48.4 29)"/>' +
+  '<path class="' + fa + '" d="M13.4 34.6c-1.7 3-2.5 6.4-2.3 10.2l3.1 1.3c1.3-3.3 1.8-6.9 1.3-10.8z"/>' +
+  '<path class="' + fa + '" d="M50.6 34.6c1.7 3 2.5 6.4 2.3 10.2l-3.1 1.3c-1.3-3.3-1.8-6.9-1.3-10.8z"/>' +
+  '<ellipse class="s" cx="12.4" cy="48.6" rx="2.4" ry="2.9"/>' +
+  '<ellipse class="s" cx="51.6" cy="48.6" rx="2.4" ry="2.9"/>' +
+  '<path class="d" d="M24.6 49.5h14.8l-.7 5.6c-4.3 1.5-9.1 1.5-13.4 0z"/>';
+}
+function BT(tg){
+  const lat = tg==='lats'?'h':'b', tri = tg==='tri'?'h':'b';
+  return '<ellipse class="b" cx="32" cy="6.3" rx="4.9" ry="5.6"/>' +
+  '<path class="b" d="M28.9 11.2h6.2l.6 4.6h-7.4z"/>' +
+  '<path class="s" d="M32 12.5 24.6 17c1.6 3.4 3.2 6.4 5.4 8.9l2-.9 2 .9c2.2-2.5 3.8-5.5 5.4-8.9z"/>' +
+  '<ellipse class="s" cx="19.4" cy="21.6" rx="5" ry="4.5"/>' +
+  '<ellipse class="s" cx="44.6" cy="21.6" rx="5" ry="4.5"/>' +
+  '<path class="' + lat + '" d="M23.8 26c-1.8 3.9-1.7 8.3.4 12.4l6 3c.9-4.7.5-9.6-1.2-14l-2.6-1.8z"/>' +
+  '<path class="' + lat + '" d="M40.2 26c1.8 3.9 1.7 8.3-.4 12.4l-6 3c-.9-4.7-.5-9.6 1.2-14l2.6-1.8z"/>' +
+  '<rect class="s" x="30.1" y="28" width="1.6" height="12" rx=".8"/>' +
+  '<rect class="s" x="32.3" y="28" width="1.6" height="12" rx=".8"/>' +
+  '<path class="' + lat + '" d="M32 41 28.8 44.5 32 49.5 35.2 44.5z"/>' +
+  '<ellipse class="' + tri + '" cx="15.6" cy="29" rx="4" ry="6.2" transform="rotate(12 15.6 29)"/>' +
+  '<ellipse class="' + tri + '" cx="48.4" cy="29" rx="4" ry="6.2" transform="rotate(-12 48.4 29)"/>' +
+  '<path class="b" d="M13.4 34.6c-1.7 3-2.5 6.4-2.3 10.2l3.1 1.3c1.3-3.3 1.8-6.9 1.3-10.8z"/>' +
+  '<path class="b" d="M50.6 34.6c1.7 3 2.5 6.4 2.3 10.2l-3.1 1.3c-1.3-3.3-1.8-6.9-1.3-10.8z"/>' +
+  '<ellipse class="s" cx="12.4" cy="48.6" rx="2.4" ry="2.9"/>' +
+  '<ellipse class="s" cx="51.6" cy="48.6" rx="2.4" ry="2.9"/>' +
+  '<path class="d" d="M24.6 49.5h14.8l-.7 5.6c-4.3 1.5-9.1 1.5-13.4 0z"/>';
+}
+function FL(tg){
+  const q = tg==='quads'?'h':'b', qi = tg==='quads'?'h':'s';
+  return '<path class="d" d="M21.5 5h21l-1.2 9.5c-6 2-12.6 2-18.6 0z"/>' +
+  '<path class="' + q + '" d="M23.2 15.5c-1.5 5.6-1.3 11.4.7 17.2l4.4 1.9c1.7-6.1 1.6-12.6.1-19.1z"/>' +
+  '<path class="' + qi + '" d="M29.7 16.5c-.9 4.8-.9 9.7-.1 14.5l2.2-.5c.6-4.6.5-9.3-.4-14z"/>' +
+  '<path class="' + q + '" d="M40.8 15.5c1.5 5.6 1.3 11.4-.7 17.2l-4.4 1.9c-1.7-6.1-1.6-12.6-.1-19.1z"/>' +
+  '<path class="' + qi + '" d="M34.3 16.5c.9 4.8.9 9.7.1 14.5l-2.2-.5c-.6-4.6-.5-9.3.4-14z"/>' +
+  '<ellipse class="s" cx="26.6" cy="37" rx="2.6" ry="2.2"/><ellipse class="s" cx="37.4" cy="37" rx="2.6" ry="2.2"/>' +
+  '<path class="b" d="M24.9 39.5c-.8 4.8-.6 9.8.7 14.9l3-.2c.7-5 .6-10-.4-14.9z"/>' +
+  '<path class="b" d="M39.1 39.5c.8 4.8.6 9.8-.7 14.9l-3-.2c-.7-5-.6-10 .4-14.9z"/>' +
+  '<path class="s" d="M24.9 55l-2.8 3.4 6.6.5.5-3.7z"/>' +
+  '<path class="s" d="M39.1 55l2.8 3.4-6.6.5-.5-3.7z"/>';
+}
+function BL(tg){
+  const cf = tg==='calves'?'h':'b';
+  return '<path class="d" d="M21.5 5h21l-1.2 9.5c-6 2-12.6 2-18.6 0z"/>' +
+  '<path class="b" d="M23.4 15.5c-1.3 5.4-1.1 11 .6 16.6l4.3 1.7c1.6-5.9 1.5-12.2.1-18.5z"/>' +
+  '<path class="b" d="M40.6 15.5c1.3 5.4 1.1 11-.6 16.6l-4.3 1.7c-1.6-5.9-1.5-12.2-.1-18.5z"/>' +
+  '<ellipse class="s" cx="26.6" cy="36.2" rx="2.5" ry="2"/><ellipse class="s" cx="37.4" cy="36.2" rx="2.5" ry="2"/>' +
+  '<path class="' + cf + '" d="M24.7 38.5c-1.2 2.9-1.4 6.2-.5 9.7l3.9 1c.8-3.4.6-6.9-.5-10.2l-1.5-.9z"/>' +
+  '<path class="' + cf + '" d="M39.3 38.5c1.2 2.9 1.4 6.2.5 9.7l-3.9 1c-.8-3.4-.6-6.9.5-10.2l1.5-.9z"/>' +
+  '<path class="s" d="M26.4 49.8c-.3 1.7-.3 3.4 0 5.1l2.1.1c.2-1.7.1-3.4-.2-5.2z"/>' +
+  '<path class="s" d="M37.6 49.8c.3 1.7.3 3.4 0 5.1l-2.1.1c-.2-1.7-.1-3.4.2-5.2z"/>' +
+  '<path class="s" d="M25.4 55.5l-2.4 3 6 .4.4-3.2z"/>' +
+  '<path class="s" d="M38.6 55.5l2.4 3-6 .4-.4-3.2z"/>';
+}
 const ICONS = {
-  chest: TORSO + '<g ' + HL + '><path d="M8.75 7c.9-.5 1.95-.75 3-.75v3.6c0 .95-.7 1.6-1.7 1.6s-1.6-.7-1.6-1.8z"/><path d="M15.25 7c-.9-.5-1.95-.75-3-.75v3.6c0 .95.7 1.6 1.7 1.6s1.6-.7 1.6-1.8z"/></g>',
-  back: TORSO + '<path ' + HL + ' d="M8.3 6.6h7.4l-.5 4.3c-.9 1.5-1.9 2.3-3.2 2.3s-2.3-.8-3.2-2.3z"/>' + BP.spine,
-  legs: LEGS + '<g ' + HLS + ' stroke-width="3.05"><path d="M10 7 9.63 12.4"/><path d="M14 7 14.37 12.4"/></g>',
-  shoulders: TORSO_ND + '<g ' + HL + '><circle cx="6.6" cy="7.15" r="1.95"/><circle cx="17.4" cy="7.15" r="1.95"/></g>',
-  bi: TORSO + '<g ' + HLS + ' stroke-width="2.35"><path d="M6.4 7.3 5.35 11.7"/><path d="M17.6 7.3 18.65 11.7"/></g>',
-  tri: TORSO + BP.spine + '<g ' + HLS + ' stroke-width="2.35"><path d="M6.35 7.5 5.35 11.6"/><path d="M17.65 7.5 18.65 11.6"/></g>',
-  forearms: TORSO + '<g ' + HLS + ' stroke-width="2.35"><path d="M5.28 12.1 4.35 15.7"/><path d="M18.72 12.1 19.65 15.7"/></g>',
-  calves: LEGS + '<g ' + HLS + ' stroke-width="2.95"><path d="M9.62 12.95 9.8 16.1"/><path d="M14.38 12.95 14.2 16.1"/></g>'
+  chest: FT('pecs'), back: BT('lats'), legs: FL('quads'), shoulders: FT('delts'),
+  bi: FT('bi'), tri: BT('tri'), forearms: FT('fa'), calves: BL('calves')
 };
 function avatar(m){
-  return '<span class="av" aria-hidden="true"><svg viewBox="0 0 24 24">' +
+  return '<span class="av" aria-hidden="true"><svg viewBox="0 0 64 64">' +
     ICONS[m.id] + '</svg></span>';
 }
 
 const I18N = {
   ar: {
     dir:'rtl', langBtn:'EN', title:'جيم شرار', themeLbl:'تبديل الوضع الفاتح والداكن',
-    tabToday:'اليوم', tabWeek:'الأسبوع', tabHistory:'السجل',
+    tabToday:'اليوم', tabWeek:'الأسبوع', tabHistory:'السجل', tabExr:'التمارين',
+    exrTitle:'التمارين والأجهزة', exrSub:'اضغط على أي تمرين لتسجيل سيت', exrWord:'تمارين',
+    addExr:'+ إضافة تمرين', saveBtn:'حفظ', exNamePh:'اسم التمرين',
+    eq:{bar:'بار', db:'دمبل', cable:'كيبل', machine:'جهاز', body:'جسم'},
     bigHead:'عضلة كبيرة · 15 سيت بالأسبوع لكل عضلة',
     smallHead:'عضلة صغيرة · 9 سيت بالأسبوع لكل عضلة',
     extraHead:'تمارين إضافية',
@@ -215,7 +287,10 @@ const I18N = {
   },
   en: {
     dir:'ltr', langBtn:'عربي', title:'Sharar Gym', themeLbl:'Toggle light and dark mode',
-    tabToday:'Today', tabWeek:'Week', tabHistory:'History',
+    tabToday:'Today', tabWeek:'Week', tabHistory:'History', tabExr:'Exercises',
+    exrTitle:'Exercises and machines', exrSub:'Tap an exercise to log a set', exrWord:'exercises',
+    addExr:'+ Add exercise', saveBtn:'Save', exNamePh:'Exercise name',
+    eq:{bar:'Bar', db:'Dumbbell', cable:'Cable', machine:'Machine', body:'Body'},
     bigHead:'Big muscles · 15 sets/week each',
     smallHead:'Small muscles · 9 sets/week each',
     extraHead:'Extra work',
@@ -237,6 +312,21 @@ const I18N = {
   }
 };
 
+const EXR = {
+  chest: [['بنش برس','Bench press','bar'],['دمبل برس عالي','Incline dumbbell press','db'],['فراشة (بيك دك)','Pec deck fly','machine'],['كروس أوفر','Cable crossover','cable'],['بوش أب','Push-ups','body']],
+  back: [['سحب أمامي (لات بول داون)','Lat pulldown','machine'],['سحب أرضي','Seated cable row','cable'],['عقلة','Pull-ups','body'],['تي بار رو','T-bar row','bar'],['هايبر إكستنشن — أسفل الظهر','Hyperextension — lower back','machine']],
+  legs: [['سكوات','Squat','bar'],['ليج برس','Leg press','machine'],['ليج إكستنشن','Leg extension','machine'],['ليج كيرل','Leg curl','machine'],['لانجز','Lunges','db']],
+  shoulders: [['شولدر برس','Shoulder press','db'],['رفرفة جانبية','Lateral raise','db'],['رفرفة أمامية','Front raise','db'],['رفرفة خلفية','Reverse fly','machine'],['شرقز — للمثلثات','Shrugs — traps','db']],
+  bi: [['زد بار كيرل','EZ-bar curl','bar'],['دمبل كيرل تبادل','Alternating dumbbell curl','db'],['كونسنتريشن كيرل','Concentration curl','db'],['كيبل كيرل','Cable curl','cable']],
+  tri: [['بوش داون','Cable pushdown','cable'],['فرنش برس','Overhead extension','db'],['ديبس','Dips','body'],['كيك باك','Kickback','db']],
+  forearms: [['ريست كيرل','Wrist curl','bar'],['ريفيرس كيرل','Reverse curl','bar'],['فارمر ووك','Farmer walk','db'],['جريب — تقوية القبضة','Grip trainer','machine']],
+  calves: [['سمانة واقف','Standing calf raise','machine'],['سمانة جالس','Seated calf raise','machine'],['سمانة على الليج برس','Leg-press calf raise','machine'],['سمانة على درجة','Step calf raise','body']]
+};
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function load(){
   let raw = null;
   try { raw = localStorage.getItem(KEY); } catch(e) {}
@@ -246,17 +336,18 @@ function load(){
       if (s && s.version === 1 && typeof s.days === 'object' && s.days) {
         if (s.lang !== 'ar' && s.lang !== 'en') s.lang = 'ar';
         if (s.theme !== 'light' && s.theme !== 'dark') s.theme = 'auto';
+        if (!s.custom || typeof s.custom !== 'object') s.custom = {};
         return s;
       }
     } catch(e) {
       try { localStorage.setItem(KEY + '.corrupt.' + Date.now(), raw); } catch(_) {}
     }
   }
-  return { version:1, lang:'ar', theme:'auto', days:{}, lastExport:null };
+  return { version:1, lang:'ar', theme:'auto', days:{}, custom:{}, lastExport:null };
 }
 
 const state = load();
-const ui = { tab:'today', open:null };
+const ui = { tab:'today', open:null, openExr:new Set(), addingFor:null };
 
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(state)); }
@@ -419,6 +510,33 @@ function renderWeek(){
   return h;
 }
 
+function renderExr(){
+  let h = '<div class="panel" style="margin-top:16px"><h2>' + t('exrTitle') + '</h2><div class="muted">' + t('exrSub') + '</div></div>';
+  for (const m of MUSCLES) {
+    const L = t('m')[m.id];
+    const builtin = EXR[m.id] || [];
+    const custom = (state.custom && state.custom[m.id]) || [];
+    h += '<details class="month exm" data-m="' + m.id + '"' + (ui.openExr.has(m.id) ? ' open' : '') + '>' +
+      '<summary>' + avatar(m) + '<span class="exnm">' + L[0] + '</span><span class="n">' + (builtin.length + custom.length) + ' ' + t('exrWord') + '</span></summary>';
+    for (const e of builtin) {
+      h += '<div class="exrow" data-logx="' + m.id + '"><span>' + (state.lang === 'ar' ? e[0] : e[1]) + '</span><span class="chip">' + t('eq')[e[2]] + '</span></div>';
+    }
+    for (const e of custom) {
+      h += '<div class="exrow" data-logx="' + m.id + '"><span>' + esc(e.n) + '</span><span class="chip">' + t('eq')[e.q] + '</span></div>';
+    }
+    if (ui.addingFor === m.id) {
+      h += '<div class="exform"><input id="exName" placeholder="' + t('exNamePh') + '" maxlength="40">' +
+        '<select id="exEq">' + ['machine','bar','db','cable','body'].map(q =>
+          '<option value="' + q + '">' + t('eq')[q] + '</option>').join('') + '</select>' +
+        '<button type="button" data-saveex="' + m.id + '">' + t('saveBtn') + '</button></div>';
+    } else {
+      h += '<div class="exadd" data-add="' + m.id + '">' + t('addExr') + '</div>';
+    }
+    h += '</details>';
+  }
+  return h;
+}
+
 function renderHistory(){
   const keys = Object.keys(state.days).filter(k => dayHasWork(state.days[k])).sort().reverse();
   let h = '';
@@ -458,11 +576,13 @@ function render(){
   document.getElementById('langBtn').textContent = t('langBtn');
   document.querySelector('#tabToday span').textContent = t('tabToday');
   document.querySelector('#tabWeek span').textContent = t('tabWeek');
+  document.querySelector('#tabExr span').textContent = t('tabExr');
   document.querySelector('#tabHistory span').textContent = t('tabHistory');
   document.querySelectorAll('nav button').forEach(b =>
     b.classList.toggle('active', b.dataset.tab === ui.tab));
   const view = document.getElementById('view');
-  view.innerHTML = ui.tab === 'today' ? renderToday() : ui.tab === 'week' ? renderWeek() : renderHistory();
+  view.innerHTML = ui.tab === 'today' ? renderToday() : ui.tab === 'week' ? renderWeek() :
+    ui.tab === 'exr' ? renderExr() : renderHistory();
 }
 
 let toastTimer;
@@ -499,6 +619,18 @@ function mergeImport(inc){
       if (v > (dst[m.id] || 0)) dst[m.id] = v;
     }
   }
+  if (inc.custom && typeof inc.custom === 'object') {
+    if (!state.custom) state.custom = {};
+    for (const mid in inc.custom) {
+      if (!MUSCLES.some(m => m.id === mid) || !Array.isArray(inc.custom[mid])) continue;
+      const dst = state.custom[mid] = state.custom[mid] || [];
+      for (const e of inc.custom[mid]) {
+        if (e && typeof e.n === 'string' && e.n.trim() && !dst.some(x => x.n === e.n)) {
+          dst.push({ n: e.n.slice(0, 40), q: (typeof e.q === 'string' && t('eq')[e.q]) ? e.q : 'machine' });
+        }
+      }
+    }
+  }
 }
 function doImport(file){
   const r = new FileReader();
@@ -520,6 +652,36 @@ document.getElementById('view').addEventListener('click', e => {
   if (un) { unlogSet(un.dataset.unlog); return; }
   const lg = e.target.closest('[data-log]');
   if (lg) { logSet(lg.dataset.log); return; }
+  const lx = e.target.closest('[data-logx]');
+  if (lx) {
+    const id = lx.dataset.logx;
+    const before = (state.days[todayKey()] || {})[id] || 0;
+    logSet(id);
+    const after = (state.days[todayKey()] || {})[id] || 0;
+    if (after > before) toast(t('m')[id][0] + ' +1 ✓');
+    return;
+  }
+  const ad = e.target.closest('[data-add]');
+  if (ad) {
+    ui.addingFor = ad.dataset.add;
+    render();
+    const inp = document.getElementById('exName');
+    if (inp) inp.focus();
+    return;
+  }
+  const sv = e.target.closest('[data-saveex]');
+  if (sv) {
+    const name = (document.getElementById('exName').value || '').trim();
+    const q = document.getElementById('exEq').value;
+    if (name) {
+      if (!state.custom) state.custom = {};
+      (state.custom[sv.dataset.saveex] = state.custom[sv.dataset.saveex] || []).push({ n: name.slice(0, 40), q: q });
+      ui.addingFor = null;
+      save();
+      render();
+    }
+    return;
+  }
   const act = e.target.closest('[data-act]');
   if (act) {
     if (act.dataset.act === 'export') doExport();
@@ -534,7 +696,12 @@ document.getElementById('view').addEventListener('keydown', e => {
 });
 document.getElementById('view').addEventListener('toggle', e => {
   const d = e.target;
-  if (d.classList && d.classList.contains('month') && ui.open) {
+  if (!d.classList || !d.classList.contains('month')) return;
+  if (d.dataset.m) {
+    if (d.open) ui.openExr.add(d.dataset.m); else ui.openExr.delete(d.dataset.m);
+    return;
+  }
+  if (ui.open) {
     if (d.open) ui.open.add(d.dataset.month); else ui.open.delete(d.dataset.month);
   }
 }, true);
