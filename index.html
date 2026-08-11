@@ -66,14 +66,20 @@ h1{font-size:19px;font-weight:600}
 .card:active{transform:scale(.965)}
 .card.done{border-color:var(--ok-border)}
 .row{display:flex;gap:10px;align-items:center}
-.av{width:60px;height:60px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--avbg);--avbg:#F4F4F0;--body:#B7BBBF;--shade:#A2A8AD;--hl:#3FA84F}
+.av,.mpic{flex:none;display:flex;align-items:center;justify-content:center;background:var(--avbg);--avbg:#F4F4F0;--body:#B7BBBF;--shade:#A2A8AD;--hl:#3FA84F}
+.av{width:60px;height:60px;border-radius:50%}
+.mpic{width:46px;height:46px;border-radius:12px}
 .av svg{width:44px;height:44px}
-.av svg .b{fill:var(--body)}
-.av svg .s{fill:var(--shade)}
-.av svg .d{fill:#6B7076}
+.mpic svg{width:36px;height:36px}
+.av svg .b,.mpic svg .b{fill:var(--body)}
+.av svg .s,.mpic svg .s{fill:var(--shade)}
+.av svg .d,.mpic svg .d{fill:#6B7076}
 .av svg .h{fill:var(--hl)}
-@media (prefers-color-scheme: dark){:root:not([data-mode="light"]) .av{--avbg:#33343A;--body:#7A8086;--shade:#666C72}}
-[data-mode="dark"] .av{--avbg:#33343A;--body:#7A8086;--shade:#666C72}
+.mpic svg .fr{stroke:var(--body);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.mpic svg .fs{stroke:var(--shade);fill:none;stroke-width:2.2;stroke-linecap:round}
+.mpic svg .fd{stroke:#6B7076;fill:none;stroke-width:3;stroke-linecap:round}
+@media (prefers-color-scheme: dark){:root:not([data-mode="light"]) .av,:root:not([data-mode="light"]) .mpic{--avbg:#33343A;--body:#7A8086;--shade:#666C72}}
+[data-mode="dark"] .av,[data-mode="dark"] .mpic{--avbg:#33343A;--body:#7A8086;--shade:#666C72}
 .nm{font-size:14.5px;font-weight:600}
 .sub{font-size:11.5px;color:var(--sec)}
 .cnt{font-size:12.5px;color:var(--sec);margin-top:1px}
@@ -261,6 +267,37 @@ function avatar(m){
     ICONS[m.id] + '</svg></span>';
 }
 
+const MACH = {
+  bench: '<path class="fr" d="M11 10v24M37 10v24"/><path class="fd" d="M6 16h36"/><circle class="s" cx="11" cy="16" r="3.4"/><circle class="s" cx="37" cy="16" r="3.4"/><rect class="s" x="13" y="29" width="22" height="5.5" rx="2.6"/><path class="fr" d="M17 34.5V41M31 34.5V41"/>',
+  incline: '<path class="fr" d="M7 41h26"/><rect class="s" x="9" y="15" width="8" height="23" rx="3.6" transform="rotate(26 13 26.5)"/><rect class="s" x="21" y="31" width="10" height="6" rx="2.8"/><path class="fr" d="M14 39v2M27 37v4"/><path class="fd" d="M33 13h9"/><rect class="d" x="31" y="9.5" width="3.4" height="7" rx="1.4"/><rect class="d" x="42.6" y="9.5" width="3.4" height="7" rx="1.4"/>',
+  pecdeck: '<path class="fr" d="M24 11v22M15 42h18"/><rect class="s" x="20.4" y="26" width="7.2" height="10" rx="3"/><rect class="b" x="7" y="9" width="7" height="17" rx="3.4" transform="rotate(-12 10.5 17.5)"/><rect class="b" x="34" y="9" width="7" height="17" rx="3.4" transform="rotate(12 37.5 17.5)"/>',
+  cross: '<path class="fr" d="M8 7v34M40 7v34"/><rect class="s" x="4.6" y="19" width="6.8" height="13" rx="1.8"/><rect class="s" x="36.6" y="19" width="6.8" height="13" rx="1.8"/><path class="fs" d="M10 9 24 30M38 9 24 30"/><circle class="d" cx="24" cy="32" r="2.4"/>',
+  mat: '<rect class="s" x="7" y="28" width="34" height="7" rx="3.5"/><circle class="b" cx="37" cy="23" r="5.4"/><circle class="fs" cx="37" cy="23" r="2"/>',
+  latpull: '<path class="fd" d="M9 12l6 2.6h18l6-2.6"/><path class="fs" d="M24 6v8"/><path class="fr" d="M24 15v11M14 42h20"/><rect class="s" x="18.4" y="27" width="11.2" height="4.4" rx="2.2"/><rect class="s" x="17" y="33.4" width="14" height="5" rx="2.4"/>',
+  row: '<path class="fr" d="M7 41h34M11 31v10"/><rect class="b" x="8" y="24" width="5" height="11" rx="2" transform="rotate(12 10.5 29.5)"/><path class="fs" d="M14 30h11"/><rect class="d" x="25" y="27.4" width="3.4" height="5.4" rx="1.4"/><rect class="s" x="27" y="32" width="12" height="5" rx="2.4"/>',
+  pullup: '<path class="fr" d="M11 42V13q0-4 4-4h18q4 0 4 4v29"/><path class="fd" d="M11 17h26"/>',
+  tbar: '<path class="fr" d="M7 41h34"/><path class="fd" d="M11 39 33 17"/><circle class="s" cx="30" cy="20" r="4.8"/><circle class="b" cx="34" cy="16" r="3.2"/><path class="fd" d="M15 30l7 7"/>',
+  roman: '<path class="fr" d="M7 41h26M13 41V29M31 37v4"/><rect class="s" x="8" y="19" width="17" height="6.4" rx="3.2" transform="rotate(-22 16.5 22)"/><circle class="b" cx="31" cy="32" r="3.2"/><circle class="b" cx="37" cy="32" r="3.2"/>',
+  rack: '<path class="fr" d="M12 8v33M36 8v33M12 9h24"/><path class="fd" d="M6 19h36"/><circle class="s" cx="11" cy="19" r="3.6"/><circle class="s" cx="37" cy="19" r="3.6"/>',
+  legpress: '<path class="fr" d="M6 41h36"/><rect class="s" x="7" y="25" width="13" height="6.4" rx="2.8" transform="rotate(-16 13.5 28)"/><rect class="s" x="9" y="31" width="9" height="5" rx="2.4"/><rect class="b" x="27" y="9" width="8" height="19" rx="2.6" transform="rotate(22 31 18.5)"/><path class="fr" d="M20 36 30 26"/>',
+  legext: '<path class="fr" d="M12 41h22M16 41V22"/><rect class="s" x="13" y="16" width="7" height="15" rx="3.2"/><rect class="s" x="18" y="26.6" width="12" height="6" rx="2.8"/><path class="fr" d="M29 33l6 5"/><circle class="b" cx="37" cy="40" r="3.6"/>',
+  legcurl: '<path class="fr" d="M7 41h30M13 41v-7M31 41v-7"/><rect class="s" x="9" y="28.6" width="23" height="5.6" rx="2.8"/><path class="fr" d="M32 30l6-7"/><circle class="b" cx="39.5" cy="21.5" r="3.6"/>',
+  db: '<path class="fd" d="M10 17h12"/><rect class="d" x="6.8" y="13" width="3.6" height="8" rx="1.5"/><rect class="d" x="21.6" y="13" width="3.6" height="8" rx="1.5"/><path class="fd" d="M26 33h12"/><rect class="d" x="22.8" y="29" width="3.6" height="8" rx="1.5"/><rect class="d" x="37.6" y="29" width="3.6" height="8" rx="1.5"/>',
+  ez: '<path class="fd" d="M7 24h7l4-4.5 6 9 6-9 4 4.5h7"/><rect class="d" x="3.4" y="19.6" width="4" height="8.8" rx="1.7"/><rect class="d" x="40.6" y="19.6" width="4" height="8.8" rx="1.7"/>',
+  barb: '<path class="fd" d="M5 24h38"/><rect class="d" x="9" y="17.6" width="4" height="12.8" rx="1.7"/><rect class="d" x="35" y="17.6" width="4" height="12.8" rx="1.7"/><rect class="d" x="14.4" y="19.6" width="3.2" height="8.8" rx="1.5"/><rect class="d" x="30.4" y="19.6" width="3.2" height="8.8" rx="1.5"/>',
+  cable: '<path class="fr" d="M15 7v34M33 7v34M15 7h18"/><rect class="s" x="19.4" y="23" width="9.2" height="14" rx="2"/><path class="fs" d="M24 9v12"/><rect class="d" x="20.8" y="19.4" width="6.4" height="3.4" rx="1.6"/>',
+  dips: '<path class="fr" d="M11 42V19q0-4 4-4h4M37 42V19q0-4-4-4h-4"/>',
+  grip: '<circle class="fr" cx="24" cy="12" r="4"/><rect class="d" x="12" y="16" width="6.4" height="17" rx="3" transform="rotate(-16 15.2 24.5)"/><rect class="d" x="29.6" y="16" width="6.4" height="17" rx="3" transform="rotate(16 32.8 24.5)"/>',
+  calfstand: '<path class="fr" d="M16 20v12M32 20v12M14 42h20"/><rect class="s" x="12" y="13.6" width="9" height="5.4" rx="2.6"/><rect class="s" x="27" y="13.6" width="9" height="5.4" rx="2.6"/><rect class="b" x="16.5" y="33.4" width="15" height="4.2" rx="1.8"/>',
+  calfseat: '<path class="fr" d="M9 41h30M14 41v-9M33 41v-6"/><rect class="s" x="10" y="26.6" width="13" height="5.4" rx="2.6"/><rect class="b" x="24" y="18.6" width="13" height="4.8" rx="2.4"/><path class="fr" d="M30 23.4v6"/><rect class="b" x="25" y="33" width="13" height="3.8" rx="1.8"/>',
+  step: '<rect class="s" x="10" y="27" width="28" height="8.6" rx="2.4"/><rect class="b" x="15" y="20" width="18" height="7" rx="2.4"/>',
+  gen: '<path class="fr" d="M14 7v34M34 7v34M14 7h20"/><rect class="s" x="18.6" y="17" width="10.8" height="17" rx="2"/><path class="fd" d="M17 24h14"/>'
+};
+const QICON = { bar:'barb', db:'db', cable:'cable', machine:'gen', body:'mat' };
+function mpic(k){
+  return '<span class="mpic" aria-hidden="true"><svg viewBox="0 0 48 48">' + (MACH[k] || MACH.gen) + '</svg></span>';
+}
+
 const I18N = {
   ar: {
     dir:'rtl', langBtn:'EN', title:'جيم شرار', themeLbl:'تبديل الوضع الفاتح والداكن',
@@ -316,49 +353,49 @@ const I18N = {
 
 const EXR = {
   chest: [
-    ['بنش برس','Bench press','bar','بنش مسطح + بار','Flat bench + barbell'],
-    ['دمبل برس عالي','Incline dumbbell press','db','بنش مائل + دمبلات','Incline bench + dumbbells'],
-    ['فراشة (بيك دك)','Pec deck fly','machine','جهاز الفراشة','Pec deck machine'],
-    ['كروس أوفر','Cable crossover','cable','جهاز الكيبل المتقاطع','Cable crossover station'],
-    ['بوش أب','Push-ups','body','بدون معدات','No equipment']],
+    ['بنش برس','Bench press','bar','بنش مسطح + بار','Flat bench + barbell','bench'],
+    ['دمبل برس عالي','Incline dumbbell press','db','بنش مائل + دمبلات','Incline bench + dumbbells','incline'],
+    ['فراشة (بيك دك)','Pec deck fly','machine','جهاز الفراشة','Pec deck machine','pecdeck'],
+    ['كروس أوفر','Cable crossover','cable','جهاز الكيبل المتقاطع','Cable crossover station','cross'],
+    ['بوش أب','Push-ups','body','بدون معدات','No equipment','mat']],
   back: [
-    ['سحب أمامي (لات بول داون)','Lat pulldown','machine','جهاز السحب العلوي','Lat pulldown machine'],
-    ['سحب أرضي','Seated cable row','cable','جهاز السحب الأرضي','Seated row station'],
-    ['عقلة','Pull-ups','body','بار العقلة','Pull-up bar'],
-    ['تي بار رو','T-bar row','bar','جهاز التي بار','T-bar row machine'],
-    ['هايبر إكستنشن — أسفل الظهر','Hyperextension — lower back','machine','كرسي الظهر الروماني','Back extension bench']],
+    ['سحب أمامي (لات بول داون)','Lat pulldown','machine','جهاز السحب العلوي','Lat pulldown machine','latpull'],
+    ['سحب أرضي','Seated cable row','cable','جهاز السحب الأرضي','Seated row station','row'],
+    ['عقلة','Pull-ups','body','بار العقلة','Pull-up bar','pullup'],
+    ['تي بار رو','T-bar row','bar','جهاز التي بار','T-bar row machine','tbar'],
+    ['هايبر إكستنشن — أسفل الظهر','Hyperextension — lower back','machine','كرسي الظهر الروماني','Back extension bench','roman']],
   legs: [
-    ['سكوات','Squat','bar','قفص السكوات + بار','Squat rack + barbell'],
-    ['ليج برس','Leg press','machine','جهاز الليج برس','Leg press machine'],
-    ['ليج إكستنشن','Leg extension','machine','جهاز فرد الأرجل','Leg extension machine'],
-    ['ليج كيرل','Leg curl','machine','جهاز ثني الأرجل','Leg curl machine'],
-    ['لانجز','Lunges','db','دمبلات','Dumbbells']],
+    ['سكوات','Squat','bar','قفص السكوات + بار','Squat rack + barbell','rack'],
+    ['ليج برس','Leg press','machine','جهاز الليج برس','Leg press machine','legpress'],
+    ['ليج إكستنشن','Leg extension','machine','جهاز فرد الأرجل','Leg extension machine','legext'],
+    ['ليج كيرل','Leg curl','machine','جهاز ثني الأرجل','Leg curl machine','legcurl'],
+    ['لانجز','Lunges','db','دمبلات','Dumbbells','db']],
   shoulders: [
-    ['شولدر برس','Shoulder press','db','كرسي بظهر عالي + دمبلات','Upright bench + dumbbells'],
-    ['رفرفة جانبية','Lateral raise','db','دمبلات خفيفة','Light dumbbells'],
-    ['رفرفة أمامية','Front raise','db','دمبلات خفيفة','Light dumbbells'],
-    ['رفرفة خلفية','Reverse fly','machine','جهاز الفراشة العكسي','Reverse pec deck'],
-    ['شرقز — للمثلثات','Shrugs — traps','db','دمبلات ثقيلة','Heavy dumbbells']],
+    ['شولدر برس','Shoulder press','db','كرسي بظهر عالي + دمبلات','Upright bench + dumbbells','incline'],
+    ['رفرفة جانبية','Lateral raise','db','دمبلات خفيفة','Light dumbbells','db'],
+    ['رفرفة أمامية','Front raise','db','دمبلات خفيفة','Light dumbbells','db'],
+    ['رفرفة خلفية','Reverse fly','machine','جهاز الفراشة العكسي','Reverse pec deck','pecdeck'],
+    ['شرقز — للمثلثات','Shrugs — traps','db','دمبلات ثقيلة','Heavy dumbbells','db']],
   bi: [
-    ['زد بار كيرل','EZ-bar curl','bar','بار زد + أوزان','EZ-bar + plates'],
-    ['دمبل كيرل تبادل','Alternating dumbbell curl','db','دمبلات','Dumbbells'],
-    ['كونسنتريشن كيرل','Concentration curl','db','دمبل + كرسي','Dumbbell + bench'],
-    ['كيبل كيرل','Cable curl','cable','جهاز الكيبل — بكرة سفلية','Cable station, low pulley']],
+    ['زد بار كيرل','EZ-bar curl','bar','بار زد + أوزان','EZ-bar + plates','ez'],
+    ['دمبل كيرل تبادل','Alternating dumbbell curl','db','دمبلات','Dumbbells','db'],
+    ['كونسنتريشن كيرل','Concentration curl','db','دمبل + كرسي','Dumbbell + bench','db'],
+    ['كيبل كيرل','Cable curl','cable','جهاز الكيبل — بكرة سفلية','Cable station, low pulley','cable']],
   tri: [
-    ['بوش داون','Cable pushdown','cable','جهاز الكيبل — بكرة علوية + حبل','Cable station, high pulley + rope'],
-    ['فرنش برس','Overhead extension','db','دمبل واحد','Single dumbbell'],
-    ['ديبس','Dips','body','المتوازي','Dip bars'],
-    ['كيك باك','Kickback','db','دمبل + كرسي','Dumbbell + bench']],
+    ['بوش داون','Cable pushdown','cable','جهاز الكيبل — بكرة علوية + حبل','Cable station, high pulley + rope','cable'],
+    ['فرنش برس','Overhead extension','db','دمبل واحد','Single dumbbell','db'],
+    ['ديبس','Dips','body','المتوازي','Dip bars','dips'],
+    ['كيك باك','Kickback','db','دمبل + كرسي','Dumbbell + bench','db']],
   forearms: [
-    ['ريست كيرل','Wrist curl','bar','بار صغير + كرسي','Short bar + bench'],
-    ['ريفيرس كيرل','Reverse curl','bar','بار زد','EZ-bar'],
-    ['فارمر ووك','Farmer walk','db','دمبلات ثقيلة','Heavy dumbbells'],
-    ['جريب — تقوية القبضة','Grip trainer','machine','أداة القبضة','Grip trainer']],
+    ['ريست كيرل','Wrist curl','bar','بار صغير + كرسي','Short bar + bench','barb'],
+    ['ريفيرس كيرل','Reverse curl','bar','بار زد','EZ-bar','ez'],
+    ['فارمر ووك','Farmer walk','db','دمبلات ثقيلة','Heavy dumbbells','db'],
+    ['جريب — تقوية القبضة','Grip trainer','machine','أداة القبضة','Grip trainer','grip']],
   calves: [
-    ['سمانة واقف','Standing calf raise','machine','جهاز السمانة واقف أو السميث','Standing calf machine or Smith'],
-    ['سمانة جالس','Seated calf raise','machine','جهاز السمانة جالس','Seated calf machine'],
-    ['سمانة على الليج برس','Leg-press calf raise','machine','جهاز الليج برس','Leg press machine'],
-    ['سمانة على درجة','Step calf raise','body','درجة أو وزن حر','A step or a plate']]
+    ['سمانة واقف','Standing calf raise','machine','جهاز السمانة واقف أو السميث','Standing calf machine or Smith','calfstand'],
+    ['سمانة جالس','Seated calf raise','machine','جهاز السمانة جالس','Seated calf machine','calfseat'],
+    ['سمانة على الليج برس','Leg-press calf raise','machine','جهاز الليج برس','Leg press machine','legpress'],
+    ['سمانة على درجة','Step calf raise','body','درجة أو وزن حر','A step or a plate','step']]
 };
 
 function esc(s){
@@ -557,11 +594,11 @@ function renderExr(){
     h += '<details class="month exm" data-m="' + m.id + '"' + (ui.openExr.has(m.id) ? ' open' : '') + '>' +
       '<summary>' + avatar(m) + '<span class="exnm">' + L[0] + '</span><span class="n">' + (builtin.length + custom.length) + ' ' + t('exrWord') + '</span></summary>';
     for (const e of builtin) {
-      h += '<div class="exrow" data-logx="' + m.id + '"><div style="min-width:0"><div>' + (state.lang === 'ar' ? e[0] : e[1]) + '</div>' +
+      h += '<div class="exrow" data-logx="' + m.id + '">' + mpic(e[5]) + '<div style="flex:1;min-width:0"><div>' + (state.lang === 'ar' ? e[0] : e[1]) + '</div>' +
         '<div class="exsub">' + (state.lang === 'ar' ? e[3] : e[4]) + '</div></div><span class="chip">' + t('eq')[e[2]] + '</span></div>';
     }
     for (const e of custom) {
-      h += '<div class="exrow" data-logx="' + m.id + '"><div style="min-width:0"><div>' + esc(e.n) + '</div>' +
+      h += '<div class="exrow" data-logx="' + m.id + '">' + mpic(QICON[e.q]) + '<div style="flex:1;min-width:0"><div>' + esc(e.n) + '</div>' +
         (e.mch ? '<div class="exsub">' + esc(e.mch) + '</div>' : '') + '</div><span class="chip">' + t('eq')[e.q] + '</span></div>';
     }
     if (ui.addingFor === m.id) {
