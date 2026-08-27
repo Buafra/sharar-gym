@@ -201,8 +201,8 @@ const MUSCLES = [
   {id:'shoulders', grp:'big',   target:15},
   {id:'bi',        grp:'small', target:9},
   {id:'tri',       grp:'small', target:9},
-  {id:'forearms',  grp:'extra', target:1, session:true},
-  {id:'calves',    grp:'extra', target:2, session:true}
+  {id:'forearms',  grp:'extra', open:true},
+  {id:'calves',    grp:'extra', open:true}
 ];
 
 function FT(tg){
@@ -340,7 +340,7 @@ const I18N = {
     m:{
       chest:['صدر','','ص'], back:['ظهر','مع أسفل الظهر','ظ'], legs:['رجل','','ر'], shoulders:['أكتاف','مع المثلثات','ك'],
       bi:['باي','','ب'], tri:['تراي','','ت'],
-      forearms:['سواعد','مرة بالأسبوع','س'], calves:['بطات','مرتين بالأسبوع','بط']
+      forearms:['سواعد','بدون هدف','س'], calves:['بطات','بدون هدف','بط']
     }
   },
   en: {
@@ -368,7 +368,7 @@ const I18N = {
     m:{
       chest:['Chest','','CH'], back:['Back','incl. lower back','BK'], legs:['Legs','','LG'], shoulders:['Shoulders','incl. traps','SH'],
       bi:['Biceps','','BI'], tri:['Triceps','','TR'],
-      forearms:['Forearms','once a week','FA'], calves:['Calves','twice a week','CA']
+      forearms:['Forearms','no target','FA'], calves:['Calves','no target','CA']
     }
   }
 };
@@ -493,7 +493,7 @@ function weekTotalAt(id, anchor){
   return weekKeys(anchor).reduce((sum,k) => sum + ((state.days[k] || {})[id] || 0), 0);
 }
 function weekCompleteAt(anchor){
-  return MUSCLES.every(m => weekTotalAt(m.id, anchor) >= m.target);
+  return MUSCLES.every(m => !m.target || weekTotalAt(m.id, anchor) >= m.target);
 }
 function streak(){
   let anchor = new Date();
@@ -510,7 +510,7 @@ function weekTotal(id){
   return weekKeys().reduce((sum,k) => sum + ((state.days[k] || {})[id] || 0), 0);
 }
 function dayTotalSets(day){
-  return MUSCLES.reduce((s,m) => s + (m.session ? 0 : (day[m.id] || 0)), 0);
+  return MUSCLES.reduce((s,m) => s + (day[m.id] || 0), 0);
 }
 function dayHasWork(day){
   return MUSCLES.some(m => (day[m.id] || 0) > 0);
@@ -522,7 +522,7 @@ function daySummaryText(day){
   const parts = [];
   for (const m of MUSCLES) {
     const v = day[m.id] || 0;
-    if (v > 0) parts.push(t('m')[m.id][0] + (m.session ? ' ✓' : ' ' + v));
+    if (v > 0) parts.push(t('m')[m.id][0] + ' ' + v);
   }
   return parts.join(' · ');
 }
@@ -531,15 +531,14 @@ function logSet(id){
   const m = MUSCLES.find(x => x.id === id);
   const tk = todayKey();
   const day = state.days[tk] = state.days[tk] || {};
-  if (m.session && (day[id] || 0) >= 1) { toast(t('alreadyToday')); return; }
   day[id] = (day[id] || 0) + 1;
   save();
   try { navigator.vibrate && navigator.vibrate(12); } catch(e) {}
   render();
   const el = document.querySelector('[data-log="' + id + '"] .cnt');
   if (el) el.classList.add('pop');
-  if (weekTotal(id) === m.target) toast(t('m')[id][0] + ' — ' + t('targetHit'));
-  if (!m.session) startRest();
+  if (m.target && weekTotal(id) === m.target) toast(t('m')[id][0] + ' — ' + t('targetHit'));
+  startRest();
 }
 
 let restInt = null, restEnd = 0;
@@ -580,17 +579,13 @@ function muscleCard(m){
   const L = t('m')[m.id];
   const wk = weekTotal(m.id);
   const td = (state.days[todayKey()] || {})[m.id] || 0;
-  const done = wk >= m.target;
-  let progress;
-  if (m.session) {
-    const n = Math.max(m.target, wk);
-    progress = '<div class="dots">' + Array.from({length:n}, (_,i) =>
-      '<span class="dot' + (i < wk ? ' on' : '') + '"></span>').join('') + '</div>';
-  } else {
+  const done = !!m.target && wk >= m.target;
+  let progress = '';
+  if (m.target) {
     const pct = Math.min(100, Math.round(wk / m.target * 100));
     progress = '<div class="bar"><i style="width:' + pct + '%"></i></div>';
   }
-  const cnt = wk + '/' + m.target + (m.session ? '' : ' ' + t('sets')) +
+  const cnt = (m.target ? wk + '/' + m.target : String(wk)) + ' ' + t('sets') +
     (td > 0 ? ' · <span class="td">+' + td + ' ' + t('todayWord') + '</span>' : '');
   return '<div class="card g-' + m.grp + (done ? ' done' : '') + '" role="button" tabindex="0" data-log="' + m.id + '" aria-label="' + L[0] + '">' +
     (td > 0 ? '<button type="button" class="minus" data-unlog="' + m.id + '" aria-label="−1 ' + L[0] + '">−</button>' : '') +
@@ -606,8 +601,9 @@ function renderToday(){
   let h = '';
   const rem = [];
   for (const m of MUSCLES) {
+    if (!m.target) continue;
     const left = m.target - weekTotal(m.id);
-    if (left > 0) rem.push(t('m')[m.id][0] + ' ' + left + (m.session ? '×' : ' ' + t('sets')));
+    if (left > 0) rem.push(t('m')[m.id][0] + ' ' + left + ' ' + t('sets'));
   }
   h += '<div class="panel" style="margin-top:16px"><h2>' + t('remainTitle') + '</h2>' +
     (rem.length
@@ -659,18 +655,19 @@ function renderWeek(){
     '<span class="wdots">' + Array.from({length:5}, (_,i) =>
       '<span class="wdot' + (i < trained ? ' on' : '') + '"></span>').join('') + '</span></div>' +
     '<div class="muted" style="margin-top:8px">' + t('totalSets') + ': ' +
-    MUSCLES.reduce((s,m) => s + (m.session ? 0 : weekTotal(m.id)), 0) + '</div>' +
+    MUSCLES.reduce((s,m) => s + weekTotal(m.id), 0) + '</div>' +
     (streak() > 0 ? '<div class="muted" style="margin-top:4px">' + t('streakLbl') + ': ' + streak() + ' 🔥</div>' : '') +
     '</div>';
   h += '<div class="panel">';
   for (const m of MUSCLES) {
     const L = t('m')[m.id];
     const wk = weekTotal(m.id);
-    const done = wk >= m.target;
-    const pct = Math.min(100, Math.round(wk / m.target * 100));
+    const done = !!m.target && wk >= m.target;
     h += '<div class="wrow g-' + m.grp + '">' + avatar(m) +
-      '<div class="info"><div class="nm">' + L[0] + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
-      '<span class="cnt' + (done ? ' ok' : '') + '">' + wk + '/' + m.target + (done ? ' ✓' : '') + '</span></div>';
+      '<div class="info"><div class="nm">' + L[0] + '</div>' +
+      (m.target ? '<div class="bar"><i style="width:' + Math.min(100, Math.round(wk / m.target * 100)) + '%"></i></div>' : '') +
+      '</div><span class="cnt' + (done ? ' ok' : '') + '">' +
+      (m.target ? wk + '/' + m.target + (done ? ' ✓' : '') : wk + ' ' + t('sets')) + '</span></div>';
   }
   h += '</div>';
   return h;
@@ -836,7 +833,7 @@ document.getElementById('view').addEventListener('click', e => {
     logSet(id);
     const after = (state.days[todayKey()] || {})[id] || 0;
     const m = MUSCLES.find(x => x.id === id);
-    if (after > before && weekTotal(id) !== m.target) toast(t('m')[id][0] + ' +1 ✓');
+    if (after > before && !(m.target && weekTotal(id) === m.target)) toast(t('m')[id][0] + ' +1 ✓');
     return;
   }
   const ad = e.target.closest('[data-add]');
