@@ -138,7 +138,32 @@ details.month summary .n{color:var(--sec);font-size:12.5px;font-weight:400}
 .btns button:active{transform:scale(.98)}
 nav{position:fixed;bottom:0;inset-inline:0;z-index:10;background:var(--surface);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
 nav .wrap{display:flex;padding:0}
-nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;border:none;background:none;color:var(--sec);font:inherit;font-size:11.5px;cursor:pointer}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;border:none;background:none;color:var(--sec);font:inherit;font-size:10.5px;cursor:pointer}
+.spc{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;margin-top:10px}
+.spc.due{border-color:#D85A30}
+.spnm{font-size:14.5px;font-weight:600;padding-inline-end:78px}
+.spds{font-size:11.5px;color:var(--sec);margin-top:1px}
+.spfr{position:absolute;top:10px;inset-inline-end:10px;font-size:10.5px;padding:2px 9px;border-radius:99px;background:var(--surface2);border:1px solid var(--border);color:var(--sec)}
+.spfr.hot{background:#FAECE7;color:#712B13;border-color:#F0997B}
+@media (prefers-color-scheme: dark){:root:not([data-mode="light"]) .spfr.hot{background:#712B13;color:#F5C4B3;border-color:#993C1D}}
+[data-mode="dark"] .spfr.hot{background:#712B13;color:#F5C4B3;border-color:#993C1D}
+.sprow{display:flex;align-items:center;gap:7px;margin-top:10px;flex-wrap:wrap}
+.spdot{width:27px;height:27px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:transparent;padding:0}
+.spdot.on{background:#3FA84F;border-color:#3FA84F;color:#fff}
+.sptm{font-size:11px;color:var(--sec)}
+.spbtn{border:1px solid var(--border2);background:var(--surface2);color:var(--text);border-radius:8px;padding:5px 10px;font:inherit;font-size:11.5px;cursor:pointer}
+.wchip{padding:5px 9px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);color:var(--sec);font:inherit;font-size:11.5px;cursor:pointer}
+.wchip.on{background:var(--acc-soft);border-color:var(--acc);color:var(--text)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.cal .dh{font-size:10px;color:var(--sec);text-align:center}
+.cal .dc{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10.5px;color:var(--sec);background:var(--surface2);border:1px solid var(--border)}
+.cal .dc i{width:6px;height:6px;border-radius:50%;margin-top:2px}
+.cal .full i{background:#3FA84F}
+.cal .part i{background:#EF9F27}
+.cal .none i{background:var(--bg);border:1px solid var(--border2)}
+.cal .fut{opacity:.35}
+.cal .blank{opacity:.55}
+.cal .today{outline:2px solid var(--acc)}
 nav button.active{color:var(--acc)}
 nav svg{width:22px;height:22px}
 #toast{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));inset-inline:0;margin:auto;width:max-content;max-width:85%;background:var(--toast-bg);color:var(--toast-fg);padding:9px 16px;border-radius:99px;font-size:13px;opacity:0;transform:translateY(6px);transition:.2s;pointer-events:none;z-index:20}
@@ -175,6 +200,10 @@ nav svg{width:22px;height:22px}
   </button>
   <button type="button" data-tab="exr" id="tabExr">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 8.5v7M17 8.5v7M4.5 10v4M19.5 10v4M7 12h10M2.5 12h2M19.5 12h2"/></svg>
+    <span></span>
+  </button>
+  <button type="button" data-tab="supps" id="tabSupps">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v4.5L6.8 13a5.5 5.5 0 1 0 10.4 0L14 7.5V3M8 15.5h8"/></svg>
     <span></span>
   </button>
   <button type="button" data-tab="history" id="tabHistory">
@@ -328,6 +357,12 @@ const I18N = {
     alreadyToday:'مسجّلة اليوم — زر − يلغيها',
     restDone:'انتهت الراحة — يلا سيت جديد', restStop:'إيقاف مؤقت الراحة', targetHit:'هدف الأسبوع اكتمل ✓',
     remainTitle:'باقي هذا الأسبوع', remainDone:'كل أهداف الأسبوع اكتملت ✓',
+    tabSupps:'المكملات', supTitle:'المكملات', supDosesToday:'جرعات اليوم', of:'من',
+    addSupp:'+ إضافة مكمل', addSupp2:'إضافة مكمل', supName:'اسم المكمل', supDose:'الجرعة — مثال: سكوب 30غ',
+    perDay:'يوميًا', perWeek:'أسبوعيًا', timesPh:'أوقات التذكير: 08:00, 21:00 (اختياري)',
+    dueNow:'حان الوقت', thisWeekS:'هالأسبوع', toCal:'للتقويم', editS:'تعديل', archiveS:'إيقاف المكمل',
+    cancelBtn:'إلغاء', adherence:'الالتزام', legFull:'🟢 كل الجرعات', legPart:'🟠 جزئي', legNone:'⚪ ولا جرعة',
+    pastLocked:'أيام سابقة ما تتعدل', pickDaysMsg:'اختر أيام الأسبوع أولًا', calAdded:'نزّل الملف وافتحه ليضاف للتقويم مع تنبيهات',
     streakLbl:'أسابيع كاملة متتالية', addNote:'+ إضافة ملاحظة لليوم', notePh:'ملاحظة اليوم…',
     todaySummary:'ملخص اليوم', totalSets:'مجموع السيتات', nothingToday:'ما تسجّل شي اليوم',
     weekTitle:'هذا الأسبوع', trainedPrefix:'تمرّنت', trainedOf:'من 5 أيام',
@@ -356,6 +391,12 @@ const I18N = {
     alreadyToday:'Already logged today — use − to undo',
     restDone:'Rest over — next set', restStop:'Stop rest timer', targetHit:'Weekly target reached ✓',
     remainTitle:'Remaining this week', remainDone:'All weekly targets complete ✓',
+    tabSupps:'Supps', supTitle:'Supplements', supDosesToday:'Doses today', of:'of',
+    addSupp:'+ Add supplement', addSupp2:'Add supplement', supName:'Supplement name', supDose:'Dose — e.g., 1 scoop 30g',
+    perDay:'per day', perWeek:'per week', timesPh:'Reminder times: 08:00, 21:00 (optional)',
+    dueNow:'Due now', thisWeekS:'this week', toCal:'To calendar', editS:'Edit', archiveS:'Stop supplement',
+    cancelBtn:'Cancel', adherence:'Adherence', legFull:'🟢 All doses', legPart:'🟠 Partial', legNone:'⚪ None',
+    pastLocked:'Past days are locked', pickDaysMsg:'Pick the weekdays first', calAdded:'Open the downloaded file to add alerts to your calendar',
     streakLbl:'Complete weeks in a row', addNote:'+ Add a note for today', notePh:'Note for today…',
     todaySummary:'Today summary', totalSets:'Total sets', nothingToday:'Nothing logged today',
     weekTitle:'This week', trainedPrefix:'Trained', trainedOf:'of 5 days',
@@ -434,17 +475,19 @@ function load(){
         if (s.lang !== 'ar' && s.lang !== 'en') s.lang = 'ar';
         if (s.theme !== 'light' && s.theme !== 'dark') s.theme = 'auto';
         if (!s.custom || typeof s.custom !== 'object') s.custom = {};
+        if (!Array.isArray(s.supps)) s.supps = [];
+        if (!s.suppLog || typeof s.suppLog !== 'object') s.suppLog = {};
         return s;
       }
     } catch(e) {
       try { localStorage.setItem(KEY + '.corrupt.' + Date.now(), raw); } catch(_) {}
     }
   }
-  return { version:1, lang:'ar', theme:'auto', days:{}, custom:{}, lastExport:null };
+  return { version:1, lang:'ar', theme:'auto', days:{}, custom:{}, supps:[], suppLog:{}, lastExport:null };
 }
 
 const state = load();
-const ui = { tab:'today', open:null, openExr:new Set(), addingFor:null, editingNote:false };
+const ui = { tab:'today', open:null, openExr:new Set(), addingFor:null, editingNote:false, addingSupp:false, form:null, calM:null };
 
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(state)); }
@@ -703,6 +746,172 @@ function renderExr(){
   return h;
 }
 
+function suppActiveOn(sp, dk){
+  if (sp.created && dk < sp.created) return false;
+  if (sp.offDate && dk >= sp.offDate) return false;
+  return true;
+}
+function suppExpectedOn(sp, dk){
+  if (!suppActiveOn(sp, dk)) return 0;
+  if (sp.freq === 'day') return sp.n;
+  return (sp.wdays || []).includes(parseKey(dk).getDay()) ? 1 : 0;
+}
+function suppLogged(sp, dk){ return (state.suppLog[dk] || {})[sp.id] || 0; }
+function suppWeekTaken(sp){ return weekKeys().reduce((s,k) => s + suppLogged(sp, k), 0); }
+function wdShort(i){ return fmt(new Date(2026, 7, 2 + i), {weekday:'short'}); }
+function wdNarrow(i){ return fmt(new Date(2026, 7, 2 + i), {weekday:'narrow'}); }
+function hmNow(){ const d = new Date(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+
+function toggleSupp(id, idx){
+  const sp = state.supps.find(x => x.id === id);
+  if (!sp) return;
+  const tk = todayKey();
+  const log = state.suppLog[tk] = state.suppLog[tk] || {};
+  const today = log[id] || 0;
+  const base = sp.freq === 'week' ? suppWeekTaken(sp) - today : 0;
+  const total = base + today;
+  const target = idx < total ? idx : idx + 1;
+  const nt = target - base;
+  if (nt < 0) { toast(t('pastLocked')); return; }
+  log[id] = nt;
+  save();
+  try { navigator.vibrate && navigator.vibrate(10); } catch(e) {}
+  render();
+}
+
+function stashSuppForm(){
+  const f = ui.form; if (!f) return;
+  const g = id => document.getElementById(id);
+  if (g('spName')) f.name = g('spName').value;
+  if (g('spDose')) f.dose = g('spDose').value;
+  if (g('spN')) f.n = +g('spN').value;
+  if (g('spTimes')) f.timesText = g('spTimes').value;
+  if (g('spWtime')) f.wtime = g('spWtime').value;
+}
+
+function suppIcs(sp){
+  const L = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ShararGym//EN'];
+  const dt = todayKey().replace(/-/g, '');
+  const WD = ['SU','MO','TU','WE','TH','FR','SA'];
+  const ev = (time, rr, i) => {
+    L.push('BEGIN:VEVENT', 'UID:' + sp.id + '-' + i + '@sharargym',
+      'DTSTART:' + dt + 'T' + time.replace(':', '') + '00',
+      'RRULE:' + rr,
+      'SUMMARY:' + sp.name + (sp.dose ? ' — ' + sp.dose : ''),
+      'BEGIN:VALARM', 'TRIGGER:PT0M', 'ACTION:DISPLAY', 'DESCRIPTION:' + sp.name, 'END:VALARM', 'END:VEVENT');
+  };
+  if (sp.freq === 'day') {
+    (sp.times && sp.times.length ? sp.times : ['09:00']).forEach((tm, i) => ev(tm || '09:00', 'FREQ=DAILY', i));
+  } else {
+    ev(sp.wtime || '09:00', 'FREQ=WEEKLY;BYDAY=' + (sp.wdays || []).map(d => WD[d]).join(','), 0);
+  }
+  L.push('END:VCALENDAR');
+  const blob = new Blob([L.join('\r\n')], {type:'text/calendar'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'supp-' + (sp.name || 'supplement').replace(/[^\w؀-ۿ-]+/g, '_') + '.ics';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast(t('calAdded'));
+}
+
+function renderSupps(){
+  const tk = todayKey();
+  const act = state.supps.filter(sp => suppActiveOn(sp, tk));
+  let exp = 0, tak = 0;
+  for (const sp of act) {
+    const e = suppExpectedOn(sp, tk);
+    exp += e;
+    tak += Math.min(suppLogged(sp, tk), e);
+  }
+  let h = '<div class="panel" style="margin-top:16px"><h2>' + t('supTitle') + '</h2><div class="muted">' +
+    t('supDosesToday') + ': ' + tak + ' ' + t('of') + ' ' + exp + '</div></div>';
+  for (const sp of act) {
+    const today = suppLogged(sp, tk);
+    const isW = sp.freq === 'week';
+    const base = isW ? suppWeekTaken(sp) - today : 0;
+    const total = base + today;
+    const slots = isW ? (sp.wdays || []).length : sp.n;
+    let due = false;
+    if (!isW) {
+      for (let i = 0; i < sp.n; i++) {
+        if (sp.times && sp.times[i] && today <= i && hmNow() > sp.times[i]) { due = true; break; }
+      }
+    } else if ((sp.wdays || []).includes(new Date().getDay()) && today === 0 && sp.wtime && hmNow() > sp.wtime) {
+      due = true;
+    }
+    let circles = '';
+    for (let i = 0; i < Math.max(slots, total); i++) {
+      const lbl = isW ? (sp.wdays[i] !== undefined ? wdShort(sp.wdays[i]) : '') : ((sp.times || [])[i] || '');
+      circles += '<button type="button" class="spdot' + (i < total ? ' on' : '') + '" data-tsupp="' + sp.id + '" data-i="' + i + '" aria-label="' + esc(sp.name) + ' ' + (i + 1) + '">✓</button>' +
+        (lbl ? '<span class="sptm">' + esc(lbl) + '</span>' : '');
+    }
+    h += '<div class="spc' + (due ? ' due' : '') + '">' +
+      '<span class="spfr' + (due ? ' hot' : '') + '">' + (due ? t('dueNow') : slots + '× ' + (isW ? t('perWeek') : t('perDay'))) + '</span>' +
+      '<div class="spnm">' + esc(sp.name) + '</div>' +
+      (sp.dose ? '<div class="spds">' + esc(sp.dose) + '</div>' : '') +
+      '<div class="sprow">' + circles + '</div>' +
+      '<div class="sprow" style="margin-top:8px">' +
+      (isW ? '<span class="sptm">' + t('thisWeekS') + ' ' + total + '/' + slots + '</span>' : '') +
+      '<span style="flex:1"></span>' +
+      '<button type="button" class="spbtn" data-icssupp="' + sp.id + '">🗓 ' + t('toCal') + '</button>' +
+      '<button type="button" class="spbtn" data-editsupp="' + sp.id + '">✎ ' + t('editS') + '</button>' +
+      '</div></div>';
+  }
+  if (ui.addingSupp) {
+    const f = ui.form;
+    const wchips = Array.from({length:7}, (_,i) =>
+      '<button type="button" class="wchip' + (f.wdays.has(i) ? ' on' : '') + '" data-wday="' + i + '">' + wdShort(i) + '</button>').join('');
+    h += '<div class="panel"><h2>' + (f.editId ? t('editS') : t('addSupp2')) + '</h2>' +
+      '<div class="exform" style="border-top:none;padding:4px 0 0">' +
+      '<input id="spName" placeholder="' + t('supName') + '" maxlength="40" value="' + esc(f.name) + '">' +
+      '<input id="spDose" placeholder="' + t('supDose') + '" maxlength="60" value="' + esc(f.dose) + '">' +
+      '<select id="spType" style="flex:1"><option value="day"' + (f.type === 'day' ? ' selected' : '') + '>' + t('perDay') + '</option><option value="week"' + (f.type === 'week' ? ' selected' : '') + '>' + t('perWeek') + '</option></select>' +
+      (f.type === 'day'
+        ? '<select id="spN" style="flex:1">' + [1,2,3,4,5].map(x => '<option' + (f.n === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select>' +
+          '<input id="spTimes" placeholder="' + t('timesPh') + '" value="' + esc(f.timesText) + '">'
+        : '<input id="spWtime" type="time" value="' + esc(f.wtime) + '" style="flex:1">' +
+          '<div style="flex:1 1 100%;display:flex;gap:5px;flex-wrap:wrap">' + wchips + '</div>') +
+      '<button type="button" data-savesupp="1">' + t('saveBtn') + '</button>' +
+      '<button type="button" data-cancelsupp="1">' + t('cancelBtn') + '</button>' +
+      (f.editId ? '<button type="button" data-archsupp="' + f.editId + '" style="color:#A32D2D">' + t('archiveS') + '</button>' : '') +
+      '</div></div>';
+  } else {
+    h += '<div class="exadd" style="border:1.5px dashed var(--border2);border-radius:14px;margin-top:10px;text-align:center" data-addsupp="1">' + t('addSupp') + '</div>';
+  }
+  const cm = ui.calM || new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  ui.calM = cm;
+  const curMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  const dim = new Date(cm.getFullYear(), cm.getMonth() + 1, 0).getDate();
+  let cexp = 0, ctak = 0, cells = '';
+  for (let i = 0; i < 7; i++) cells += '<span class="dh">' + wdNarrow(i) + '</span>';
+  const lead = new Date(cm.getFullYear(), cm.getMonth(), 1).getDay();
+  for (let i = 0; i < lead; i++) cells += '<span></span>';
+  for (let d = 1; d <= dim; d++) {
+    const dk = dateKey(new Date(cm.getFullYear(), cm.getMonth(), d));
+    if (dk > tk) { cells += '<span class="dc fut">' + d + '</span>'; continue; }
+    let e = 0, raw = 0, cap = 0;
+    for (const sp of state.supps) {
+      const ee = suppExpectedOn(sp, dk);
+      const lg = suppLogged(sp, dk);
+      e += ee; raw += lg; cap += Math.min(lg, ee);
+    }
+    cexp += e; ctak += cap;
+    const cls = e === 0 ? 'blank' : (cap >= e ? 'full' : (raw > 0 ? 'part' : 'none'));
+    cells += '<span class="dc ' + cls + (dk === tk ? ' today' : '') + '">' + d + (e ? '<i></i>' : '') + '</span>';
+  }
+  const pct = cexp ? Math.round(ctak / cexp * 100) : null;
+  h += '<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">' +
+    '<button type="button" class="spbtn" data-calnav="-1">‹</button>' +
+    '<h2 style="margin:0;font-size:13.5px">' + t('adherence') + ' — ' + fmt(cm, {month:'long', year:'numeric'}) + (pct !== null ? ' · ' + pct + '%' : '') + '</h2>' +
+    (cm < curMonth ? '<button type="button" class="spbtn" data-calnav="1">›</button>' : '<span style="width:34px"></span>') +
+    '</div><div class="cal">' + cells + '</div>' +
+    '<div style="display:flex;gap:12px;margin-top:8px" class="sptm"><span>' + t('legFull') + '</span><span>' + t('legPart') + '</span><span>' + t('legNone') + '</span></div></div>';
+  return h;
+}
+
 function renderHistory(){
   const keys = Object.keys(state.days).filter(k => dayHasWork(state.days[k])).sort().reverse();
   let h = '';
@@ -748,12 +957,13 @@ function render(){
   document.querySelector('#tabToday span').textContent = t('tabToday');
   document.querySelector('#tabWeek span').textContent = t('tabWeek');
   document.querySelector('#tabExr span').textContent = t('tabExr');
+  document.querySelector('#tabSupps span').textContent = t('tabSupps');
   document.querySelector('#tabHistory span').textContent = t('tabHistory');
   document.querySelectorAll('nav button').forEach(b =>
     b.classList.toggle('active', b.dataset.tab === ui.tab));
   const view = document.getElementById('view');
   view.innerHTML = ui.tab === 'today' ? renderToday() : ui.tab === 'week' ? renderWeek() :
-    ui.tab === 'exr' ? renderExr() : renderHistory();
+    ui.tab === 'exr' ? renderExr() : ui.tab === 'supps' ? renderSupps() : renderHistory();
 }
 
 let toastTimer;
@@ -790,6 +1000,23 @@ function mergeImport(inc){
       if (v > (dst[m.id] || 0)) dst[m.id] = v;
     }
     if (typeof src._note === 'string' && src._note.trim() && !dst._note) dst._note = src._note.slice(0, 300);
+  }
+  if (Array.isArray(inc.supps)) {
+    for (const sp of inc.supps) {
+      if (sp && sp.id && typeof sp.name === 'string' && !state.supps.some(x => x.id === sp.id)) {
+        state.supps.push(sp);
+      }
+    }
+  }
+  if (inc.suppLog && typeof inc.suppLog === 'object') {
+    for (const dk in inc.suppLog) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dk) || !inc.suppLog[dk] || typeof inc.suppLog[dk] !== 'object') continue;
+      const dst = state.suppLog[dk] = state.suppLog[dk] || {};
+      for (const id in inc.suppLog[dk]) {
+        const v = Math.max(0, Math.floor(Number(inc.suppLog[dk][id]) || 0));
+        if (v > (dst[id] || 0)) dst[id] = v;
+      }
+    }
   }
   if (inc.custom && typeof inc.custom === 'object') {
     if (!state.custom) state.custom = {};
@@ -860,6 +1087,95 @@ document.getElementById('view').addEventListener('click', e => {
     }
     return;
   }
+  const ts = e.target.closest('[data-tsupp]');
+  if (ts) { toggleSupp(ts.dataset.tsupp, +ts.dataset.i); return; }
+  const as = e.target.closest('[data-addsupp]');
+  if (as) {
+    ui.addingSupp = true;
+    ui.form = { editId:null, name:'', dose:'', type:'day', n:2, timesText:'', wtime:'', wdays:new Set() };
+    render();
+    const i0 = document.getElementById('spName');
+    if (i0) i0.focus();
+    return;
+  }
+  const es2 = e.target.closest('[data-editsupp]');
+  if (es2) {
+    const sp = state.supps.find(x => x.id === es2.dataset.editsupp);
+    if (sp) {
+      ui.addingSupp = true;
+      ui.form = { editId:sp.id, name:sp.name, dose:sp.dose || '', type:sp.freq, n:sp.n || 2,
+        timesText:(sp.times || []).join(', '), wtime:sp.wtime || '', wdays:new Set(sp.wdays || []) };
+      render();
+    }
+    return;
+  }
+  const cs2 = e.target.closest('[data-cancelsupp]');
+  if (cs2) { ui.addingSupp = false; ui.form = null; render(); return; }
+  const wdb = e.target.closest('[data-wday]');
+  if (wdb) {
+    stashSuppForm();
+    const i = +wdb.dataset.wday;
+    if (ui.form.wdays.has(i)) ui.form.wdays.delete(i); else ui.form.wdays.add(i);
+    render();
+    return;
+  }
+  const ss = e.target.closest('[data-savesupp]');
+  if (ss) {
+    stashSuppForm();
+    const f = ui.form;
+    const name = (f.name || '').trim().slice(0, 40);
+    if (!name) return;
+    let supp;
+    if (f.type === 'day') {
+      const times = (f.timesText || '').split(/[,،\s]+/).map(x => {
+        const m = x.match(/^(\d{1,2}):(\d{2})$/);
+        return m ? String(+m[1]).padStart(2, '0') + ':' + m[2] : null;
+      }).filter(Boolean).slice(0, f.n);
+      supp = { freq:'day', n:f.n, times:times, wdays:[], wtime:'' };
+    } else {
+      const wd = [...f.wdays].sort((a,b) => a - b);
+      if (!wd.length) { toast(t('pickDaysMsg')); return; }
+      supp = { freq:'week', n:wd.length, times:[], wdays:wd, wtime:f.wtime || '' };
+    }
+    supp.name = name;
+    supp.dose = (f.dose || '').trim().slice(0, 60);
+    if (f.editId) {
+      const old = state.supps.find(x => x.id === f.editId);
+      if (old) Object.assign(old, supp);
+    } else {
+      supp.id = 's' + Date.now();
+      supp.created = todayKey();
+      state.supps.push(supp);
+    }
+    ui.addingSupp = false;
+    ui.form = null;
+    save();
+    render();
+    return;
+  }
+  const ar2 = e.target.closest('[data-archsupp]');
+  if (ar2) {
+    const sp = state.supps.find(x => x.id === ar2.dataset.archsupp);
+    if (sp) sp.offDate = todayKey();
+    ui.addingSupp = false;
+    ui.form = null;
+    save();
+    render();
+    return;
+  }
+  const ic2 = e.target.closest('[data-icssupp]');
+  if (ic2) {
+    const sp = state.supps.find(x => x.id === ic2.dataset.icssupp);
+    if (sp) suppIcs(sp);
+    return;
+  }
+  const cn = e.target.closest('[data-calnav]');
+  if (cn) {
+    const cm = ui.calM || new Date();
+    ui.calM = new Date(cm.getFullYear(), cm.getMonth() + (+cn.dataset.calnav), 1);
+    render();
+    return;
+  }
   const en = e.target.closest('[data-editnote]');
   if (en) {
     ui.editingNote = true;
@@ -886,9 +1202,17 @@ document.getElementById('view').addEventListener('click', e => {
   }
 });
 document.getElementById('view').addEventListener('keydown', e => {
-  if ((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.log) {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.dataset &&
+      (e.target.dataset.log || e.target.dataset.editnote)) {
     e.preventDefault();
-    logSet(e.target.dataset.log);
+    e.target.click();
+  }
+});
+document.getElementById('view').addEventListener('change', e => {
+  if (e.target.id === 'spType') {
+    stashSuppForm();
+    ui.form.type = e.target.value;
+    render();
   }
 });
 document.getElementById('view').addEventListener('toggle', e => {
